@@ -1,19 +1,17 @@
-# Guía de Recursos Multimedia y Documentos (`assets/`)
+# Recursos Multimedia y Documentos (`assets/`)
 
-Esta carpeta está preconfigurada para que puedas colocar tus archivos reales y el sitio web los detecte y muestre automáticamente:
+Especificación de estructura de directorios y nombres de archivo requeridos para la carga estática de recursos en el portafolio:
 
 ## 1. Curriculum Vitae (`assets/cv/`)
-- Guarda tu CV en formato PDF como:
-  `assets/cv/Alejandro_Diaz_CV.pdf`
-- Todos los botones de **"Descargar CV"** en la barra superior, Hero y sección CV enlazan directamente a esta ruta.
+- Ruta esperada: `assets/cv/Alejandro_Diaz_CV.pdf`
+- Los hipervínculos de descarga en la barra de navegación superior, sección Hero y panel de trayectoria enlazan de forma directa a este recurso estático.
 
-## 2. Fotografía Profesional (`assets/img/`)
-- Guarda tu fotografía profesional como:
-  `assets/img/alejandro-diaz.jpg` (o `.png` / `.webp`, actualizando la extensión en el atributo `src` si usas otra).
-- Si el archivo existe, se mostrará automáticamente en el marco del Hero/Sobre mí. Mientras no esté presente, el sitio muestra un elegante avatar tipográfico (`AD`) con estética de laboratorio sin mostrar iconos de imagen rota.
+## 2. Fotografía de Perfil (`assets/img/`)
+- Ruta esperada: `assets/img/alejandro-diaz.jpg` (formatos admitidos: `.jpg`, `.png`, `.webp`).
+- Al estar disponible el archivo, el marco de presentación lo renderiza dinámicamente. En caso de ausencia, el sistema activa un indicador tipográfico técnico (`AD`) con estilo visual dark slate.
 
-## 3. Logos Institucionales y de Empresas (`assets/logos/`)
-Puedes colocar los logos oficiales en los siguientes nombres de archivo para que se rendericen automáticamente en sus tarjetas correspondientes:
+## 3. Identidades Institucionales (`assets/logos/`)
+Archivos de logotipos vinculados a las fichas de experiencia y formación:
 - `assets/logos/ug.png` — Universidad de Guanajuato
 - `assets/logos/curfimex.png` — Curfimex
 - `assets/logos/all-measuring.png` — All Measuring Mexico
@@ -22,5 +20,5 @@ Puedes colocar los logos oficiales en los siguientes nombres de archivo para que
 - `assets/logos/dciencia.png` — Revista DCIencia
 - `assets/logos/juventudesgto.png` — JuventudesGTO (Investigador Joven)
 
-## 4. Fotos de Proyectos / Personal Lab (`assets/projects/`)
-- `assets/projects/arc-reactor.jpg` — Fotografía real de tu prototipo ARC Reactor con NeoPixel de 16 LEDs.
+## 4. Prototipos y Laboratorio (`assets/projects/`)
+- `assets/projects/arc-reactor.jpg` — Registro visual del prototipo físico de reactor Arc (módulo circular / matriz NeoPixel).
