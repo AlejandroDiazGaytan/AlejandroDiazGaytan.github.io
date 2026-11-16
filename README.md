@@ -2,7 +2,7 @@
 
 Sitio web profesional y portafolio interactivo de proyectos en ingeniería química sustentable, desarrollo de software, modelado de sistemas e instrumentación.
 
-Desplegado en producción mediante GitHub Pages: **[alejandrodiazgaytan.github.io](https://alejandrodiazgaytan.github.io/)**
+Desplegado en producción mediante GitHub Pages y dominio personalizado: **[alejandrodiaz.tech](https://alejandrodiaz.tech/)** *(respaldo: [alejandrodiazgaytan.github.io](https://alejandrodiazgaytan.github.io/))*
 
 ## Características Principales
 
