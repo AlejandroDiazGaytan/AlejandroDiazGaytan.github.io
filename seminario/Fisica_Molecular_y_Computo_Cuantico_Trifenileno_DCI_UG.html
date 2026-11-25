@@ -999,6 +999,60 @@
     text-align: center;
   }
 
+  /* =========================================================================
+     APUNTADOR LÁSER ÓPTICO EN PANTALLA COMPLETA (O CON TECLA 'L')
+     ========================================================================= */
+  body.laser-active,
+  body.laser-active * {
+    cursor: none !important;
+  }
+  #laser-trail-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9998;
+    display: none;
+  }
+  body.laser-active #laser-trail-canvas {
+    display: block;
+  }
+  #laser-dot {
+    position: fixed;
+    top: -100px;
+    left: -100px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 22%, #ff1744 58%, rgba(255, 23, 68, 0.1) 100%);
+    box-shadow:
+      0 0 10px 3px rgba(255, 23, 68, 0.95),
+      0 0 22px 7px rgba(244, 63, 94, 0.65),
+      0 0 38px 12px rgba(225, 29, 72, 0.35);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    display: none;
+    transition: transform 0.06s ease-out;
+  }
+  body.laser-active #laser-dot {
+    display: block;
+  }
+  #laser-dot.laser-clicking {
+    transform: translate(-50%, -50%) scale(1.65);
+    box-shadow:
+      0 0 16px 6px rgba(255, 255, 255, 0.95),
+      0 0 32px 12px rgba(255, 23, 68, 0.95),
+      0 0 55px 20px rgba(244, 63, 94, 0.6);
+  }
+  .ctrl-btn.laser-on {
+    color: #fb7185 !important;
+    background: rgba(244, 63, 94, 0.18) !important;
+    border: 1px solid rgba(244, 63, 94, 0.45);
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.35);
+  }
+
   /* Optimización específica para smartphones (Pantallas <= 640px) */
   @media (max-width: 640px) {
     section { padding: 14px 10px; }
@@ -1395,7 +1449,7 @@
 <!-- ======================================================================= -->
 <section id="slide-6">
   <div class="slide-container">
-    <span class="slide-tag">Humor Físico-Computacional</span>
+    <span class="slide-tag">Ironía Físico-Computacional</span>
     <h1>La Pesadilla de los Mínimos Locales en Espacios Multidimensionales</h1>
     <p style="font-size: 16px;">
       ¿Qué le ocurre al optimizador cuando aumentamos la dimensión del Hamiltoniano? (Pasa el ratón por las fases):
@@ -1863,7 +1917,7 @@
 
       <div class="qa-item">
         <div class="qa-header" onclick="toggleQA(this)">
-          <span>5. ¿Y para los de 8vo en adelante (o 13vo semestre xd) que ya ven cerca la titulación?</span>
+          <span>5. ¿Y para los de 8vo en adelante (o 13vo semestre) que ya ven cerca la titulación?</span>
           <span class="qa-arrow">&#9660;</span>
         </div>
         <div class="qa-content">
@@ -1934,6 +1988,10 @@
   <div id="lb-hint">💡 Rueda del ratón o pellizco a 2 dedos para Zoom (hasta 500%) · Arrastra para moverte por las sub-ramas · Doble clic para Zoom rápido 2.5x</div>
 </div>
 
+<!-- APUNTADOR LÁSER ÓPTICO Y ESTELA -->
+<canvas id="laser-trail-canvas"></canvas>
+<div id="laser-dot"></div>
+
 <!-- CONTROLES FLOTANTES -->
 <div id="footer-controls">
   <button class="ctrl-btn" onclick="prevSlide()" title="Anterior (Flecha Arriba / Flecha Izq / RePág)">&#9664; <span>Ant<span class="hide-mobile">erior</span></span></button>
@@ -1942,7 +2000,9 @@
   <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
   <button class="ctrl-btn" onclick="nextSlide()" title="Siguiente (Espacio / Flecha Abajo / Flecha Der / AvPág)"><span>Sig<span class="hide-mobile">uiente</span></span> &#9654;</button>
   <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
-  <button class="ctrl-btn" id="fs-btn" onclick="toggleFullScreen()" title="Pantalla Completa (Tecla 'F')">⛶<span class="hide-mobile"> Pantalla Completa</span></button>
+  <button class="ctrl-btn" id="fs-btn" onclick="toggleFullScreen()" title="Pantalla Completa + Apuntador Láser Automático (Tecla 'F')">⛶<span class="hide-mobile"> Pantalla Completa</span></button>
+  <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
+  <button class="ctrl-btn" id="laser-btn" onclick="toggleLaserMode()" title="Activar / Desactivar Apuntador Láser (Tecla 'L')">🔴<span class="hide-mobile"> Láser</span></button>
   <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Modo Claro / Oscuro (Tecla 'T')">☀️<span class="hide-mobile"> Modo Claro</span></button>
 </div>
@@ -2009,13 +2069,94 @@
     } else if (e.key === 'f' || e.key === 'F') {
       e.preventDefault();
       toggleFullScreen();
+    } else if (e.key === 'l' || e.key === 'L') {
+      e.preventDefault();
+      toggleLaserMode();
     } else if (e.key === 't' || e.key === 'T') {
       e.preventDefault();
       toggleTheme();
     }
   });
 
-  // Control de Pantalla Completa
+  // =========================================================================
+  // APUNTADOR LÁSER ÓPTICO CON ESTELA SUAVE (AUTO EN PANTALLA COMPLETA O TECLA 'L')
+  // =========================================================================
+  let laserEnabled = false;
+  const laserTrail = [];
+
+  function setLaserMode(active) {
+    laserEnabled = !!active;
+    document.body.classList.toggle('laser-active', laserEnabled);
+    const lBtn = document.getElementById('laser-btn');
+    if (lBtn) {
+      lBtn.classList.toggle('laser-on', laserEnabled);
+      lBtn.innerHTML = laserEnabled ? '🔴<span class="hide-mobile"> Láser ON</span>' : '🔴<span class="hide-mobile"> Láser</span>';
+    }
+    if (!laserEnabled) {
+      laserTrail.length = 0;
+    }
+  }
+
+  function toggleLaserMode() {
+    setLaserMode(!laserEnabled);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const dot = document.getElementById('laser-dot');
+    const canvas = document.getElementById('laser-trail-canvas');
+    if (!dot || !canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resizeLaserCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeLaserCanvas();
+    window.addEventListener('resize', resizeLaserCanvas);
+
+    window.addEventListener('mousemove', (e) => {
+      if (!laserEnabled) return;
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+      laserTrail.push({ x: e.clientX, y: e.clientY, life: 1.0 });
+      if (laserTrail.length > 22) laserTrail.shift();
+    });
+
+    window.addEventListener('mousedown', () => {
+      if (laserEnabled) dot.classList.add('laser-clicking');
+    });
+    window.addEventListener('mouseup', () => {
+      dot.classList.remove('laser-clicking');
+    });
+
+    function renderLaserTrail() {
+      requestAnimationFrame(renderLaserTrail);
+      if (!laserEnabled) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (laserTrail.length > 1) {
+        for (let i = 1; i < laserTrail.length; i++) {
+          const p0 = laserTrail[i - 1];
+          const p1 = laserTrail[i];
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y);
+          ctx.lineTo(p1.x, p1.y);
+          ctx.strokeStyle = `rgba(255, 23, 68, ${p1.life * 0.65})`;
+          ctx.lineWidth = p1.life * 5.5;
+          ctx.lineCap = 'round';
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#ff1744';
+          ctx.stroke();
+        }
+      }
+      for (let i = laserTrail.length - 1; i >= 0; i--) {
+        laserTrail[i].life -= 0.065;
+        if (laserTrail[i].life <= 0) laserTrail.splice(i, 1);
+      }
+    }
+    renderLaserTrail();
+  });
+
+  // Control de Pantalla Completa (Activa el Apuntador Láser automáticamente)
   function toggleFullScreen() {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(err => {
@@ -2029,10 +2170,13 @@
   }
 
   document.addEventListener('fullscreenchange', () => {
+    const isFS = !!document.fullscreenElement;
     const fsBtn = document.getElementById('fs-btn');
     if (fsBtn) {
-      fsBtn.innerHTML = document.fullscreenElement ? '⛶<span class="hide-mobile"> Salir</span>' : '⛶<span class="hide-mobile"> Pantalla Completa</span>';
+      fsBtn.innerHTML = isFS ? '⛶<span class="hide-mobile"> Salir</span>' : '⛶<span class="hide-mobile"> Pantalla Completa</span>';
     }
+    // Activar apuntador láser automáticamente al entrar a pantalla completa
+    setLaserMode(isFS);
   });
 
   // Control de Tema Claro / Oscuro
