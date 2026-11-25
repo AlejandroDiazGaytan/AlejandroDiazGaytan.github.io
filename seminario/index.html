@@ -1158,25 +1158,24 @@
 
 <div id="progress-bar"></div>
 
-<!-- NAVEGACIÓN LATERAL (17 SLIDES) -->
+<!-- NAVEGACIÓN LATERAL (16 SLIDES) -->
 <div id="nav-dots">
-  <div class="dot active" onclick="scrollToSlide(0)" title="0. Portada"></div>
-  <div class="dot" onclick="scrollToSlide(1)" title="1. ¿Qué es Espectroscopía?"></div>
-  <div class="dot" onclick="scrollToSlide(2)" title="2. ¿Por qué Rovibrónica?"></div>
-  <div class="dot" onclick="scrollToSlide(3)" title="3. Objeto: Trifenileno"></div>
-  <div class="dot" onclick="scrollToSlide(4)" title="4. Chorro Frío & La Licuadora"></div>
-  <div class="dot" onclick="scrollToSlide(5)" title="5. Colapso del Modelo Rígido"></div>
-  <div class="dot" onclick="scrollToSlide(6)" title="6. Meme Mr. Increíble & 3D"></div>
-  <div class="dot" onclick="scrollToSlide(7)" title="7. Solución Coriolis"></div>
-  <div class="dot" onclick="scrollToSlide(8)" title="8. Arquitectura Matemática"></div>
-  <div class="dot" onclick="scrollToSlide(9)" title="9. El Cuello de Botella: Rama R"></div>
-  <div class="dot" onclick="scrollToSlide(10)" title="10. Watson & 4 Subramas"></div>
-  <div class="dot" onclick="scrollToSlide(11)" title="11. Cronología de Récords"></div>
-  <div class="dot" onclick="scrollToSlide(12)" title="12. Defensa Ciencias Aplicadas"></div>
-  <div class="dot" onclick="scrollToSlide(13)" title="13. Conclusiones de Tesis"></div>
-  <div class="dot" onclick="scrollToSlide(14)" title="14. Agradecimientos & Preguntas"></div>
-  <div class="dot" onclick="scrollToSlide(15)" title="15. Preguntas Modelo Estudiantes"></div>
-  <div class="dot" onclick="scrollToSlide(16)" title="16. Votación Consejo DCI"></div>
+  <div class="dot active" onclick="scrollToSlide(0)" title="1. Portada"></div>
+  <div class="dot" onclick="scrollToSlide(1)" title="2. ¿Qué es Espectroscopía?"></div>
+  <div class="dot" onclick="scrollToSlide(2)" title="3. ¿Por qué Rovibrónica?"></div>
+  <div class="dot" onclick="scrollToSlide(3)" title="4. Objeto: Trifenileno"></div>
+  <div class="dot" onclick="scrollToSlide(4)" title="5. Chorro Frío & La Licuadora"></div>
+  <div class="dot" onclick="scrollToSlide(5)" title="6. Colapso del Modelo Rígido"></div>
+  <div class="dot" onclick="scrollToSlide(6)" title="7. Ironía Físico-Computacional"></div>
+  <div class="dot" onclick="scrollToSlide(7)" title="8. Arquitectura Matemática"></div>
+  <div class="dot" onclick="scrollToSlide(8)" title="9. El Cuello de Botella: Rama R"></div>
+  <div class="dot" onclick="scrollToSlide(9)" title="10. Watson & 4 Subramas"></div>
+  <div class="dot" onclick="scrollToSlide(10)" title="11. Cronología de Récords"></div>
+  <div class="dot" onclick="scrollToSlide(11)" title="12. Defensa Ciencias Aplicadas"></div>
+  <div class="dot" onclick="scrollToSlide(12)" title="13. Conclusiones & Referencias"></div>
+  <div class="dot" onclick="scrollToSlide(13)" title="14. Agradecimientos & Preguntas"></div>
+  <div class="dot" onclick="scrollToSlide(14)" title="15. Preguntas Modelo Estudiantes"></div>
+  <div class="dot" onclick="scrollToSlide(15)" title="16. Votación Consejo DCI"></div>
 </div>
 
 <!-- ======================================================================= -->
@@ -1257,7 +1256,7 @@
         <div style="font-size: 30px; margin-bottom: 8px;">〰️</div>
         <h3 style="color: var(--accent-rose);">2. Espectroscopía Vibracional (Infrarrojo IR)</h3>
         <p style="font-size: 13px; color: #f43f5e; font-weight: 700; margin-bottom: 6px;">ΔE ~ 0.05 – 0.5 eV | λ ~ 2.5 – 25 µm</p>
-        <p style="font-size: 14.5px;">Mide oscilaciones periódicas de los núcleos atómicos alrededor de su posición de equilibrio. En moléculas aromáticas planas activa modos de vibración degenerados en el plano (<i>e'</i>).</p>
+        <p style="font-size: 14.5px;">Mide las oscilaciones periódicas de los enlaces y núcleos atómicos alrededor de su posición de equilibrio dentro de la estructura molecular.</p>
       </div>
 
       <div class="card-box" style="border-top: 4px solid var(--accent-emerald);">
@@ -1281,30 +1280,30 @@
     <div class="grid-2">
       <div>
         <p style="font-size: 17px; color: #ffffff;">
-          En una molécula poliaromática plana como el Trifenileno, la transición electrónica pura está <strong>estrictamente prohibida por simetría dipolar</strong>:
+          En moléculas poliaromáticas como el Trifenileno, la absorción de un fotón UV acopla simultáneamente el salto electrónico, la vibración de sus anillos y la rotación global:
         </p>
-        <div class="card-box" style="margin: 16px 0; border-left: 4px solid var(--accent-rose);">
-          <p style="font-family: monospace; font-size: 16.5px; color: #f43f5e; margin: 0;">
-            ⟨S₁ | &mu; | S₀⟩ = 0 &nbsp;&nbsp;&rArr;&nbsp;&nbsp; Transición Dipolar Prohibida
+        <div class="card-box" style="margin: 16px 0; border-left: 4px solid var(--primary-blue);">
+          <p style="font-family: monospace; font-size: 16px; color: #38bdf8; margin: 0;">
+            ΔE<sub>total</sub> = ΔE<sub>electrónica</sub> + ΔE<sub>vibracional</sub> + ΔE<sub>rotacional</sub>
           </p>
         </div>
         <p>
-          La banda fluorescente observada experimentalmente existe gracias al <strong>acoplamiento rovibrónico (falso origen Herzberg-Teller)</strong> inducido por un modo vibracional degenerado en el plano (<i>e'</i>).
+          En la espectroscopía UV convencional a temperatura ambiente, miles de transiciones se enciman formando una campana ancha donde es imposible distinguir la estructura geométrica fina.
         </p>
         <p>
-          Al usar un láser de alta resolución dentro de un chorro supersónico, no medimos una simple absorción UV: <strong>resolvemos las líneas rotacionales individuales (J, K) montadas sobre la transición vibrónica</strong>.
+          En cambio, mediante <strong>espectroscopía rovibrónica de alta resolución en chorro supersónico</strong>, logramos separar las <strong>líneas rotacionales individuales (<i>J, K</i>)</strong> del estado fundamental (<i>S</i>₀) y del estado excitado (<i>S</i>₁).
         </p>
       </div>
 
       <div class="card-box" style="background: rgba(14, 165, 233, 0.08); border-left: 4px solid var(--primary-blue);">
         <h3 style="color: #38bdf8;">La Intersección de Tres Escalas Físicas</h3>
         <ul style="padding-left: 20px; font-size: 15px; color: #cbd5e1; line-height: 1.8;">
-          <li><strong>Electrónica:</strong> El fotón láser excita del estado fundamental <i>S</i>₀ al excitado <i>S</i>₁ (~300 nm).</li>
-          <li><strong>Vibracional:</strong> El modo <i>e'</i> genera un momento angular vibracional intrínseco (<i>&ell;</i> = &plusmn;1).</li>
-          <li><strong>Rotacional:</strong> La molécula rota en el espacio cuántico con momentos <i>J</i> y proyecciones <i>K</i>.</li>
+          <li><strong>Electrónica:</strong> El láser excita la molécula del estado base <i>S</i>₀ al estado excitado <i>S</i>₁ (~300 nm).</li>
+          <li><strong>Vibracional:</strong> Los anillos aromáticos ajustan sus longitudes de enlace e interactúan con el giro molecular.</li>
+          <li><strong>Rotacional:</strong> La distribución de líneas cuantizadas (<i>J, K</i>) actúa como una huella digital de los momentos de inercia (<i>A, B, C</i>).</li>
         </ul>
         <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 12px; margin-bottom: 0;">
-          Solo modelando simultáneamente estas 3 interacciones cuánticas es posible simular la envolvente espectral real.
+          Combinar estas 3 escalas nos permite medir cómo cambia la geometría molecular al ser excitada por la luz.
         </p>
       </div>
     </div>
@@ -1490,71 +1489,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 7: LA SOLUCIÓN FÍSICA: ACOPLAMIENTO DE CORIOLIS -->
+<!-- SLIDE 7: LA ARQUITECTURA MATEMÁTICA: MATRICES VS OPTIMIZACIÓN GLOBAL -->
 <!-- ======================================================================= -->
 <section id="slide-7">
-  <div class="slide-container">
-    <span class="slide-tag">El Avance Espectroscópico</span>
-    <h1>La Solución Física: Acoplamiento de Coriolis de 1er Orden en Rotores Planos</h1>
-
-    <div class="grid-2">
-      <div>
-        <p>
-          La transición observada no es una banda pura permitida, sino un <strong>falso origen inducido por acoplamiento vibrónico (Herzberg-Teller)</strong> a través de un modo degenerado en el plano (<i>e'</i>).
-        </p>
-        <p>
-          El momento angular vibracional (&ell; = &plusmn;1) se acopla directamente con la rotación molecular rompiendo la restricción inercial estricta, lo que renormaliza la constante axial efectiva:
-        </p>
-        <div class="card-box" style="border-left: 4px solid var(--accent-emerald);">
-          <p style="font-family: monospace; font-size: 18px; color: #10b981; margin: 0;">
-            C<sub>eff</sub> = C<sub>plano</sub> · (1 - &zeta;<sub>eff</sub>) &approx; 279.84 MHz
-          </p>
-          <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
-            (frente a <i>C</i><sub>plano</sub> = 252.6 MHz del modelo rígido ideal)
-          </p>
-        </div>
-        <p>
-          Al liberar este grado de libertad cuántico en el software, la correlación global salta de <strong>16.77% a 56.33%</strong> y la Rama R alcanza un récord inicial de <strong>84.05%</strong>.
-        </p>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <div class="card-box" style="border-left: 4px solid var(--primary-blue);">
-          <span class="badge-tag badge-blue" style="margin-bottom: 8px;">Comparativa Espectroscópica</span>
-          <h3 style="font-size: 16px; margin-bottom: 10px;">Impacto de Liberar el Eje Axial (Coriolis)</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
-            <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-              <p style="font-size: 11.5px; font-weight: 700; color: var(--accent-rose); margin-bottom: 4px;">MODELO PLANO RÍGIDO</p>
-              <p style="font-size: 20px; font-weight: 800; color: var(--accent-rose); margin: 0; font-family: monospace;">r = 16.77%</p>
-              <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">C = B/2 = 252.6 MHz (Wang colapsado)</p>
-            </div>
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-              <p style="font-size: 11.5px; font-weight: 700; color: var(--accent-emerald); margin-bottom: 4px;">CON ACOPLE DE CORIOLIS</p>
-              <p style="font-size: 20px; font-weight: 800; color: var(--accent-emerald); margin: 0; font-family: monospace;">r = 56.33%</p>
-              <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">C<sub>eff</sub> = 279.84 MHz (Rama R al 84%)</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-box" style="border-left: 4px solid var(--accent-amber);">
-          <span class="badge-tag badge-amber" style="margin-bottom: 8px;">Constantes Físicas Fundamentales</span>
-          <h3 style="font-size: 16px; margin-bottom: 8px;">Geometría y Rotación del Trifenileno</h3>
-          <ul style="padding-left: 18px; font-size: 13.5px; line-height: 1.7; margin-bottom: 0;">
-            <li><strong>Constantes en el plano:</strong> <i>A″</i> = 506.89 MHz, <i>B″</i> = 506.45 MHz (diferencia mínima inercial).</li>
-            <li><strong>Eje axial renormalizado:</strong> <i>C<sub>eff</sub></i> = 279.84 MHz (absorbe el momento angular vibracional &ell; = &plusmn;1).</li>
-            <li><strong>Parámetro de asimetría:</strong> &kappa; = +0.9961 (comportamiento oblato casi perfecto).</li>
-            <li><strong>Sub-picos resueltos:</strong> Al ser 2(B - 2C<sub>eff</sub>) &ne; 0, se desbloquean los desdoblamientos a &minus;90.4 MHz.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================================================================= -->
-<!-- SLIDE 8: LA ARQUITECTURA MATEMÁTICA: MATRICES VS OPTIMIZACIÓN GLOBAL -->
-<!-- ======================================================================= -->
-<section id="slide-8">
   <div class="slide-container">
     <span class="slide-tag">El Núcleo Teórico-Computacional</span>
     <h1>¿Cómo se Resuelve Matemáticamente? Álgebra Matricial vs. Evolución Diferencial</h1>
@@ -1588,9 +1525,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 9: EL DESAFÍO DE LA ASIMETRÍA: CUANDO SOLO AJUSTABA LA RAMA R -->
+<!-- SLIDE 8: EL DESAFÍO DE LA ASIMETRÍA: CUANDO SOLO AJUSTABA LA RAMA R -->
 <!-- ======================================================================= -->
-<section id="slide-9">
+<section id="slide-8">
   <div class="slide-container">
     <span class="slide-tag">Evolución de Ajustes · Colaboración con Dr. Mario</span>
     <h1>El Desafío de la Asimetría Espectral: Cuando Solo Ajustaba la Rama R</h1>
@@ -1621,9 +1558,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 10: EL CLÍMAX CUÁNTICO: WATSON & LAS 4 SUB-RAMAS -->
+<!-- SLIDE 9: EL CLÍMAX CUÁNTICO: WATSON & LAS 4 SUB-RAMAS -->
 <!-- ======================================================================= -->
-<section id="slide-10">
+<section id="slide-9">
   <div class="slide-container">
     <span class="slide-tag">El Clímax de la Tesis · Ajuste Cuántico de Precisión</span>
     <h1>Hamiltoniano de Watson y la Resolución de las 4 Sub-ramas</h1>
@@ -1684,9 +1621,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 11: CRONOLOGÍA COMPLETA DE CONQUISTA ESPECTROSCÓPICA -->
+<!-- SLIDE 10: CRONOLOGÍA COMPLETA DE CONQUISTA ESPECTROSCÓPICA -->
 <!-- ======================================================================= -->
-<section id="slide-11">
+<section id="slide-10">
   <div class="slide-container">
     <span class="slide-tag">Evolución de Récords · 2026</span>
     <h1>Cronología de Conquista Científica: De la Paradoja al Récord Cuántico</h1>
@@ -1714,7 +1651,7 @@
         <div class="timeline-badge">3</div>
         <div>
           <h3 style="font-size: 16px; margin-bottom: 2px; color: #38bdf8;">Hito 3: Rescate Físico con Coriolis & ScoreSolver</h3>
-          <p style="font-size: 14px; margin: 0;">Liberación de la constante axial efectiva <i>C</i><sub>eff</sub> por acoplamiento con modo <i>e'</i> y ponderación ScoreSolver.</p>
+          <p style="font-size: 14px; margin: 0;">Liberación de la constante axial efectiva <i>C</i><sub>eff</sub> (relajando la restricción plana rígida) y ponderación de forma ScoreSolver.</p>
         </div>
         <div><span class="badge-tag badge-blue" style="font-size: 14px;">r = 56.33%</span></div>
       </div>
@@ -1741,9 +1678,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 12: DEFENSA CRUCIAL: CIENCIAS APLICADAS VS CIENCIAS BÁSICAS -->
+<!-- SLIDE 11: DEFENSA CRUCIAL: CIENCIAS APLICADAS VS CIENCIAS BÁSICAS -->
 <!-- ======================================================================= -->
-<section id="slide-12">
+<section id="slide-11">
   <div class="slide-container">
     <span class="slide-tag">Defensa Epistemológica del Posgrado</span>
     <h1>¿Por qué este proyecto es de CIENCIAS APLICADAS y no de Ciencias Básicas?</h1>
@@ -1776,9 +1713,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 13: CONCLUSIONES Y TRABAJO FUTURO DE TESIS -->
+<!-- SLIDE 12: CONCLUSIONES Y TRABAJO FUTURO DE TESIS -->
 <!-- ======================================================================= -->
-<section id="slide-13">
+<section id="slide-12">
   <div class="slide-container">
     <span class="slide-tag">Cierre Científico</span>
     <h1>Conclusiones & Perspectivas de la Investigación</h1>
@@ -1814,7 +1751,7 @@
       <div class="grid-3" style="gap: 14px; align-items: start;">
         <div style="font-size: 12.5px; line-height: 1.55;">
           <p style="font-size: 12px; font-weight: 800; color: var(--primary-blue); text-transform: uppercase; margin-bottom: 6px;">1. Espectroscopía LIF de Alta Resolución (Dr. L. Álvarez-Valtierra)</p>
-          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Álvarez-Valtierra, L. & Pratt, D. W.</strong> (2006). <i>Rotationally resolved S₁ &larr; S₀ electronic spectra of fluorene, carbazole, and dibenzofuran: Evidence for Herzberg–Teller coupling</i>. <strong>J. Chem. Phys.</strong>, 125(24), 244309.</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Álvarez-Valtierra, L. & Pratt, D. W.</strong> (2006). <i>Rotationally resolved S₁ &larr; S₀ electronic spectra of fluorene, carbazole, and dibenzofuran</i>. <strong>J. Chem. Phys.</strong>, 125(24), 244309.</p>
           <p style="font-size: 12.5px; margin: 0;">• <strong>Álvarez-Valtierra, L., Yi, J. T. & Pratt, D. W.</strong> (2010). <i>High resolution electronic spectroscopy of 4-methylanisole in the gas phase</i>. <strong>Phys. Chem. Chem. Phys.</strong>, 12(35), 10430–10439.</p>
         </div>
 
@@ -1835,9 +1772,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 14: AGRADECIMIENTOS FORMALES & PREGUNTAS ABIERTAS -->
+<!-- SLIDE 13: AGRADECIMIENTOS FORMALES & PREGUNTAS ABIERTAS -->
 <!-- ======================================================================= -->
-<section id="slide-14">
+<section id="slide-13">
   <div class="slide-container">
     <span class="slide-tag">Agradecimientos & Diálogo</span>
     <h1>Agradecimientos Institucionales & Apertura a Preguntas</h1>
@@ -1867,9 +1804,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 15: PLAN B ROMPEHIELOS: PREGUNTAS MODELO PARA ESTUDIANTES -->
+<!-- SLIDE 14: PLAN B ROMPEHIELOS: PREGUNTAS MODELO PARA ESTUDIANTES -->
 <!-- ======================================================================= -->
-<section id="slide-15">
+<section id="slide-14">
   <div class="slide-container">
     <span class="slide-tag">Dinámica de Mentoría Estudiantil</span>
     <h1>Preguntas Modelo & Orientación para Estudiantes de Licenciatura</h1>
@@ -1939,9 +1876,9 @@
 </section>
 
 <!-- ======================================================================= -->
-<!-- SLIDE 16: ESPACIO ESTUDIANTIL: VOTACIÓN CONSEJO DIVISIONAL DCI-UG -->
+<!-- SLIDE 15: ESPACIO ESTUDIANTIL: VOTACIÓN CONSEJO DIVISIONAL DCI-UG -->
 <!-- ======================================================================= -->
-<section id="slide-16">
+<section id="slide-15">
   <div class="slide-container">
     <span class="slide-tag">Comunidad Estudiantil DCI</span>
     <h1>Participación & Representación Estudiantil ante el Consejo Divisional</h1>
@@ -1996,7 +1933,7 @@
 <div id="footer-controls">
   <button class="ctrl-btn" onclick="prevSlide()" title="Anterior (Flecha Arriba / Flecha Izq / RePág)">&#9664; <span>Ant<span class="hide-mobile">erior</span></span></button>
   <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
-  <span id="slide-counter" style="color: var(--primary-blue); font-weight: 700; font-size: 14px;">1 / 17</span>
+  <span id="slide-counter" style="color: var(--primary-blue); font-weight: 700; font-size: 14px;">1 / 16</span>
   <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
   <button class="ctrl-btn" onclick="nextSlide()" title="Siguiente (Espacio / Flecha Abajo / Flecha Der / AvPág)"><span>Sig<span class="hide-mobile">uiente</span></span> &#9654;</button>
   <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
@@ -2009,7 +1946,7 @@
 
 <script>
   let currentSlide = 0;
-  const totalSlides = 17;
+  const totalSlides = 16;
 
   function updateProgress() {
     const scrollY = window.scrollY;
