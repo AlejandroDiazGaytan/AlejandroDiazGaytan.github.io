@@ -740,6 +740,109 @@
     color: #475569 !important;
   }
 
+  /* Corrección de contraste en Modo Claro para tarjetas especiales y correo en Slide 16 */
+  body.light-theme .spam-box {
+    background: linear-gradient(135deg, rgba(224, 242, 254, 0.96) 0%, rgba(243, 232, 255, 0.96) 100%) !important;
+    border: 2px solid rgba(2, 132, 199, 0.45) !important;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
+  }
+  body.light-theme .contact-pill-box {
+    background: #ffffff !important;
+    border: 2px solid #0284c7 !important;
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.14) !important;
+  }
+  body.light-theme .contact-pill-box p {
+    color: #0f172a !important;
+  }
+  body.light-theme .contact-pill-box .contact-label {
+    color: #0284c7 !important;
+  }
+  body.light-theme .meme-display {
+    background: rgba(241, 245, 249, 0.96) !important;
+    border-color: rgba(2, 132, 199, 0.3) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08) !important;
+  }
+  body.light-theme .timeline-card {
+    background: rgba(241, 245, 249, 0.92) !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  body.light-theme .qa-item.open .qa-content {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #334155 !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+  body.light-theme .mol-badge-overlay {
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: #0f172a !important;
+    border-color: rgba(2, 132, 199, 0.35) !important;
+  }
+
+  /* Selector de vista / zoom de sub-ramas en Slide 10 */
+  .zoom-tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .zoom-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #e2e8f0;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .zoom-tab-btn:hover {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.18);
+  }
+  .zoom-tab-btn.active {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+  }
+  body.light-theme .zoom-tab-btn {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: rgba(2, 132, 199, 0.3);
+  }
+  body.light-theme .zoom-tab-btn.active {
+    background: #0284c7;
+    color: #ffffff;
+  }
+  .super-zoom-trigger {
+    margin-top: 8px;
+    width: 100%;
+    padding: 8px 14px;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #10b981;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .super-zoom-trigger:hover {
+    background: rgba(16, 185, 129, 0.25);
+    transform: translateY(-1px);
+  }
+  body.light-theme .super-zoom-trigger {
+    background: rgba(5, 150, 105, 0.12);
+    color: #059669;
+    border-color: rgba(5, 150, 105, 0.4);
+  }
+
   /* Badges */
   .badge-tag {
     display: inline-block;
@@ -804,45 +907,96 @@
     cursor: zoom-in;
   }
 
-  /* Lightbox para ampliar gráficas en móvil y escritorio */
+  /* Lightbox con Super-Zoom Interactivo (1x a 5x) y Paneo para inspeccionar sub-ramas */
   #img-lightbox {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(2, 6, 23, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 2500;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: 12px;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    user-select: none;
   }
   #img-lightbox.active {
     display: flex;
   }
-  #img-lightbox img {
-    max-width: 96vw;
-    max-height: 82vh;
+  #lb-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    padding: 8px 14px;
+    border-radius: 24px;
+    z-index: 2510;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  }
+  .lb-btn {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .lb-btn:hover {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.25);
+  }
+  .lb-btn-accent {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #34d399;
+  }
+  .lb-btn-close {
+    background: rgba(244, 63, 94, 0.22);
+    border-color: rgba(244, 63, 94, 0.5);
+    color: #fda4af;
+  }
+  #lb-viewport {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+  }
+  #lb-viewport:active {
+    cursor: grabbing;
+  }
+  #img-lightbox-target {
+    max-width: 95vw;
+    max-height: 78vh;
     object-fit: contain;
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid rgba(56, 189, 248, 0.4);
     background: #020617;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+    transform-origin: center center;
+    transition: transform 0.08s ease-out;
+    pointer-events: none;
   }
-  body.light-theme #img-lightbox img {
+  body.light-theme #img-lightbox-target {
     background: #ffffff;
   }
-  #img-lightbox-close {
-    background: rgba(56, 189, 248, 0.2);
-    border: 1px solid rgba(56, 189, 248, 0.5);
-    color: #f8fafc;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
+  #lb-hint {
+    font-size: 12px;
+    color: #94a3b8;
+    text-align: center;
   }
 
   /* Optimización específica para smartphones (Pantallas <= 640px) */
@@ -1128,13 +1282,26 @@
         </div>
       </div>
 
-      <div class="card-box" style="text-align: center;">
-        <h3 style="color: #38bdf8; margin-bottom: 12px;">Clasificación Inercial</h3>
-        <p class="highlight-val" style="font-size: 28px;">κ = +0.998</p>
-        <p style="font-size: 15px; color: #ffffff; font-weight: 700;">Rotor Simétrico Oblato Casi Perfecto</p>
-        <p style="font-size: 14px; color: var(--text-muted); margin-top: 8px;">
-          Sus dos momentos de inercia mayores son casi idénticos en el plano (<i>A &approx; B &gt; C</i>), mientras que el eje <i>C</i> perpendicular al disco domina la rotación axial oblate.
-        </p>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card-box" style="text-align: center;">
+          <h3 style="color: #38bdf8; margin-bottom: 10px;">Clasificación Inercial</h3>
+          <p class="highlight-val" style="font-size: 28px;">κ = +0.998</p>
+          <p style="font-size: 15px; color: #ffffff; font-weight: 700;">Rotor Simétrico Oblato Casi Perfecto</p>
+          <p style="font-size: 14px; color: var(--text-muted); margin-top: 6px; margin-bottom: 0;">
+            Sus dos momentos de inercia mayores son casi idénticos en el plano (<i>A &approx; B &gt; C</i>), mientras que el eje <i>C</i> perpendicular al disco domina la rotación axial oblata.
+          </p>
+        </div>
+
+        <div class="card-box" style="border-left: 4px solid var(--accent-amber);">
+          <span class="badge-tag badge-amber" style="margin-bottom: 6px;">Vacío Histórico en la Literatura</span>
+          <h3 style="color: var(--accent-amber); font-size: 16.5px;">¿Por qué no existían constantes rotacionales del Trifenileno?</h3>
+          <p style="font-size: 13.8px; margin-bottom: 6px;">
+            <strong>1. Invisible en Microondas (<i>&mu;</i>₀ = 0 D):</strong> Por su alta simetría apolar, carece de espectro rotacional puro en microondas (FTMW).
+          </p>
+          <p style="font-size: 13.8px; margin: 0;">
+            <strong>2. Límite Vibrónico Previo:</strong> Los estudios previos en chorro supersónico (<strong>Kokkin et al., <i>J. Chem. Phys.</i> 2007</strong>) solo alcanzaron resolución vibrónica (~0.1–1 cm⁻¹ &approx; 3–30 GHz), sin poder resolver el contorno rotacional ni reportar <i>A, B, C</i>.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -1409,20 +1576,30 @@
 
     <div class="grid-2">
       <div>
-        <img src="images/Slide_09_Hito_Watson_4Subramas_Dashboard.png" alt="Dashboard Watson" class="slide-img">
-        <p style="font-size: 12px; text-align: center; margin-top: 6px; color: #10b981;">
-          Dashboard espectral: Ajuste global histórico al 70.81% (Cos = 85.8%).
+        <div class="zoom-tab-bar">
+          <button class="zoom-tab-btn active" id="btn-watson-dash" onclick="setWatsonView('dashboard')">📊 Vista General (Dashboard)</button>
+          <button class="zoom-tab-btn" id="btn-watson-zoom" onclick="setWatsonView('zoom')">🔍 Zoom Grande: 4 Sub-ramas (pP, rP, Q, rR)</button>
+        </div>
+        <img id="watson-main-img" src="images/Slide_09_Hito_Watson_4Subramas_Dashboard.png" alt="Dashboard Watson" class="slide-img">
+        <button class="super-zoom-trigger" onclick="openLightbox(document.getElementById('watson-main-img').src, 2.4)">
+          🔎 Abrir Super-Zoom Interactivo en Sub-ramas (Lupa 2.4x – 5x)
+        </button>
+        <p id="watson-img-caption" style="font-size: 12px; text-align: center; margin-top: 6px; color: #10b981;">
+          Dashboard espectral: Ajuste global histórico al 70.81% (Cos = 85.8%). Haz clic en la imagen o usa los botones para acercar las sub-ramas.
         </p>
       </div>
 
       <div>
-        <p style="font-size: 16px;">
+        <p style="font-size: 15.5px;">
           Incorporando la distorsión centrífuga cuártica de Watson (<i>D</i><sub>J</sub>, <i>D</i><sub>JK</sub>, <i>D</i><sub>K</sub>) y la corrección analítica del <strong>salto de modo del láser</strong> detectado en la región central:
         </p>
 
-        <div class="card-box" style="border-left: 4px solid var(--accent-emerald); margin-bottom: 14px; padding: 16px;">
-          <h3 style="margin-bottom: 4px; color: #10b981;">Ajuste Global Histórico: 70.81%</h3>
-          <p style="font-size: 14px; margin: 0; color: #cbd5e1;">Similitud Coseno: <strong>85.82%</strong> | Error SSE: <strong>11.36</strong> | RMS: 0.0894</p>
+        <div class="card-box" style="border-left: 4px solid var(--accent-emerald); margin-bottom: 12px; padding: 14px 16px;">
+          <span class="badge-tag badge-green" style="margin-bottom: 6px;">Aporte Inédito a la Literatura Científica</span>
+          <h3 style="margin-bottom: 4px; color: #10b981;">Ajuste Global Histórico: 70.81% (Cos = 85.82%)</h3>
+          <p style="font-size: 13.5px; margin: 0; color: #cbd5e1;">
+            <strong>Primera determinación experimental en fase gas</strong> de las constantes rotacionales efectivas (<i>A, B, C</i><sub>eff</sub>) y parámetros de Watson del Trifenileno, superando el límite vibrónico previo (Kokkin et al., <i>JCP</i> 2007).
+          </p>
         </div>
 
         <div class="grid-2" style="gap: 12px;">
@@ -1554,24 +1731,49 @@
 
     <div class="grid-2">
       <div>
-        <div class="card-box" style="margin-bottom: 20px;">
-          <h3 style="color: #38bdf8;">Conclusiones Principales</h3>
-          <ul style="padding-left: 20px; font-size: 15px; color: #cbd5e1; line-height: 1.8;">
+        <div class="card-box" style="margin-bottom: 16px;">
+          <h3 style="color: #38bdf8;">Conclusiones Principales & Aporte Inédito</h3>
+          <ul style="padding-left: 20px; font-size: 14.5px; color: #cbd5e1; line-height: 1.72;">
+            <li><strong>Hito frente a la literatura previa:</strong> Mientras que estudios anteriores en chorro supersónico (Kokkin et al., 2007) solo resolvieron bandas vibrónicas (~cm⁻¹), este trabajo reporta <strong>por primera vez la resolución rotacional sub-Doppler y las constantes inerciales (<i>A, B, C</i><sub>eff</sub>) del Trifenileno en fase gas</strong>.</li>
             <li>Se identificó y resolvió el colapso teórico del modelo rígido mediante acoplamiento de Coriolis de primer orden (<i>C</i><sub>eff</sub> &approx; 279.84 MHz).</li>
-            <li>El modelo de Watson cuártico con corrección de saltos de modo alcanzó un récord de <strong>70.81% global</strong> y <strong>93.11% en la Rama R</strong>.</li>
-            <li>Se desarrolló y validó una plataforma computacional especializada con interoperabilidad en BlueprintXAS v5.23 y aceleración por caché LRU.</li>
+            <li>El modelo de Watson cuártico con corrección de saltos de modo alcanzó un récord de <strong>70.81% global</strong> y <strong>93.11% en la Sub-rama <sup>r</sup>R</strong>.</li>
+            <li>Se validó una plataforma computacional especializada compatible con <strong>BlueprintXAS v5.23</strong> y aceleración por caché LRU (4.4&times;).</li>
           </ul>
         </div>
       </div>
 
       <div>
-        <div class="card-box" style="border-left: 4px solid var(--accent-emerald);">
+        <div class="card-box" style="border-left: 4px solid var(--accent-emerald); margin-bottom: 16px;">
           <h3 style="color: #10b981;">Próximos Pasos en el Posgrado</h3>
-          <ul style="padding-left: 20px; font-size: 15px; color: #cbd5e1; line-height: 1.8;">
-            <li>Consolidación del manuscrito de tesis de Maestría bajo la supervisión del Dr. Leonardo Álvarez-Valtierra y el Dr. Mario Delgado-Jaime.</li>
-            <li>Cálculo <i>ab-initio</i> de momentos dipolares y tensores inerciales acoplados usando PySCF y potenciales neuronales TorchANI.</li>
-            <li>Generalización del módulo computacional hacia hidrocarburos poliaromáticos mayores de interés astrofísico (Coroneno y Ovaleno).</li>
+          <ul style="padding-left: 20px; font-size: 14.5px; color: #cbd5e1; line-height: 1.72;">
+            <li>Consolidación del manuscrito de tesis de Maestría y artículo científico bajo la dirección del Dr. Leonardo Álvarez-Valtierra y el Dr. Mario Ulises Delgado-Jaime.</li>
+            <li>Cálculo <i>ab-initio</i> de momentos dipolares vibrónicos y tensores inerciales acoplados usando PySCF y potenciales neuronales TorchANI.</li>
+            <li>Extensión de la metodología hacia hidrocarburos poliaromáticos discóticos mayores de interés astrofísico (Coroneno y Ovaleno).</li>
           </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERENCIAS BIBLIOGRÁFICAS FUNDAMENTALES -->
+    <div class="card-box" style="border-top: 3px solid var(--primary-blue); padding: 18px 20px; margin-top: 4px;">
+      <h3 style="color: var(--primary-blue); font-size: 16.5px; margin-bottom: 12px;">📚 Referencias Bibliográficas Fundamentales</h3>
+      <div class="grid-3" style="gap: 14px; align-items: start;">
+        <div style="font-size: 12.5px; line-height: 1.55;">
+          <p style="font-size: 12px; font-weight: 800; color: var(--primary-blue); text-transform: uppercase; margin-bottom: 6px;">1. Espectroscopía LIF de Alta Resolución (Dr. L. Álvarez-Valtierra)</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Álvarez-Valtierra, L. & Pratt, D. W.</strong> (2006). <i>Rotationally resolved S₁ &larr; S₀ electronic spectra of fluorene, carbazole, and dibenzofuran: Evidence for Herzberg–Teller coupling</i>. <strong>J. Chem. Phys.</strong>, 125(24), 244309.</p>
+          <p style="font-size: 12.5px; margin: 0;">• <strong>Álvarez-Valtierra, L., Yi, J. T. & Pratt, D. W.</strong> (2010). <i>High resolution electronic spectroscopy of 4-methylanisole in the gas phase</i>. <strong>Phys. Chem. Chem. Phys.</strong>, 12(35), 10430–10439.</p>
+        </div>
+
+        <div style="font-size: 12.5px; line-height: 1.55;">
+          <p style="font-size: 12px; font-weight: 800; color: var(--accent-emerald); text-transform: uppercase; margin-bottom: 6px;">2. Optimización Global & BlueprintXAS (Dr. M. U. Delgado-Jaime)</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Delgado-Jaime, M. U., Mewis, C. P. & Kennepohl, P.</strong> (2010). <i>Blueprint XAS: a Matlab-based toolbox for the fitting and analysis of XAS spectra</i>. <strong>J. Synchrotron Rad.</strong>, 17(1), 132–137.</p>
+          <p style="font-size: 12.5px; margin: 0;">• <strong>Delgado-Jaime, M. U. & Kennepohl, P.</strong> (2010). <i>Development and exploration of a new methodology for the fitting and analysis of XAS data</i>. <strong>J. Synchrotron Rad.</strong>, 17(1), 119–128.</p>
+        </div>
+
+        <div style="font-size: 12.5px; line-height: 1.55;">
+          <p style="font-size: 12px; font-weight: 800; color: var(--accent-amber); text-transform: uppercase; margin-bottom: 6px;">3. Antecedentes en Trifenileno & Teoría Cuántica</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Kokkin, D. L., Reilly, N. J., Troy, T. P., Nauta, K. & Schmidt, T. W.</strong> (2007). <i>Gas phase spectra of all-benzenoid PAHs: Triphenylene</i>. <strong>J. Chem. Phys.</strong>, 126(8), 084304. <i>(Resolución vibrónica sin estructura rotacional)</i>.</p>
+          <p style="font-size: 12.5px; margin: 0;">• <strong>Wang, S. C.</strong> (1929). <strong>Phys. Rev.</strong>, 34, 243 | <strong>Watson, J. K. G.</strong> (1977). <strong>Vib. Spectra Struct.</strong>, 6, 1–89 | <strong>Storn, R. & Price, K.</strong> (1997). <strong>J. Glob. Optim.</strong>, 11, 341.</p>
         </div>
       </div>
     </div>
@@ -1706,19 +1908,30 @@
       </div>
 
       <div style="text-align: right;">
-        <div style="background: rgba(2, 6, 23, 0.65); padding: 16px 22px; border-radius: 14px; border: 1px solid rgba(56, 189, 248, 0.35);">
-          <p style="font-size: 12px; text-transform: uppercase; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">Contacto Directo</p>
-          <p style="font-size: 15px; font-family: monospace; color: #ffffff; margin: 0;">ma.diazgaytan@ugto.mx</p>
+        <div class="contact-pill-box" style="background: rgba(2, 6, 23, 0.65); padding: 16px 22px; border-radius: 14px; border: 1px solid rgba(56, 189, 248, 0.35);">
+          <p class="contact-label" style="font-size: 12px; text-transform: uppercase; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">Contacto Directo</p>
+          <p style="font-size: 15px; font-family: monospace; color: #ffffff; font-weight: 700; margin: 0;">ma.diazgaytan@ugto.mx</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- LIGHTBOX PARA AMPLIAR GRÁFICAS EN MÓVIL / ESCRITORIO -->
-<div id="img-lightbox" onclick="closeLightbox()">
-  <img id="img-lightbox-target" src="" alt="Vista ampliada">
-  <button id="img-lightbox-close" onclick="closeLightbox()">✕ Cerrar vista ampliada</button>
+<!-- LIGHTBOX CON SUPER-ZOOM INTERACTIVO (1X A 5X) Y PANEO PARA SUB-RAMAS -->
+<div id="img-lightbox">
+  <div id="lb-toolbar" onclick="event.stopPropagation()">
+    <button class="lb-btn" onclick="changeLbZoom(-0.5)" title="Alejar">➖</button>
+    <span id="lb-zoom-indicator" style="font-size: 13px; font-weight: 800; color: #38bdf8; min-width: 52px; text-align: center; font-family: monospace;">100%</span>
+    <button class="lb-btn" onclick="changeLbZoom(0.6)" title="Acercar">➕</button>
+    <button class="lb-btn lb-btn-accent" onclick="setLbZoom(2.2)" title="Zoom ideal para inspeccionar las 4 sub-ramas">🔍 2.2x Sub-ramas</button>
+    <button class="lb-btn lb-btn-accent" onclick="setLbZoom(3.5)" title="Zoom profundo punto a punto">🔍 3.5x Detalle</button>
+    <button class="lb-btn" onclick="resetLbZoom()" title="Restablecer vista 100%">🔄 100%</button>
+    <button class="lb-btn lb-btn-close" onclick="closeLightbox()" title="Cerrar (Esc)">✕ Cerrar</button>
+  </div>
+  <div id="lb-viewport" onclick="if(lbScale <= 1.05) closeLightbox()">
+    <img id="img-lightbox-target" src="" alt="Vista ampliada con Super-Zoom">
+  </div>
+  <div id="lb-hint">💡 Rueda del ratón o pellizco a 2 dedos para Zoom (hasta 500%) · Arrastra para moverte por las sub-ramas · Doble clic para Zoom rápido 2.5x</div>
 </div>
 
 <!-- CONTROLES FLOTANTES -->
@@ -1852,12 +2065,75 @@
     });
   }
 
-  // Lightbox para ver imágenes/gráficas a pantalla completa en móvil o escritorio
-  function openLightbox(src) {
+  // Selector en Slide 10 entre Dashboard General y Zoom Grande de las 4 Sub-ramas
+  function setWatsonView(mode) {
+    const img = document.getElementById('watson-main-img');
+    const cap = document.getElementById('watson-img-caption');
+    const btnDash = document.getElementById('btn-watson-dash');
+    const btnZoom = document.getElementById('btn-watson-zoom');
+    if (!img) return;
+    if (mode === 'zoom') {
+      img.src = 'images/Slide_10_Zoom_Punto_a_Punto_RamaQ_y_Subramas.png';
+      if (cap) cap.innerText = 'Acercamiento punto a punto en las 4 Sub-ramas (pP, rP, Q y rR): alineación sub-MHz tras corrección de salto de modo + Watson.';
+      if (btnDash) btnDash.classList.remove('active');
+      if (btnZoom) btnZoom.classList.add('active');
+    } else {
+      img.src = 'images/Slide_09_Hito_Watson_4Subramas_Dashboard.png';
+      if (cap) cap.innerText = 'Dashboard espectral: Ajuste global histórico al 70.81% (Cos = 85.8%). Haz clic en la imagen o usa los botones para acercar las sub-ramas.';
+      if (btnDash) btnDash.classList.add('active');
+      if (btnZoom) btnZoom.classList.remove('active');
+    }
+  }
+
+  // Lightbox con Super-Zoom Interactivo (1x a 5x) y Paneo para inspeccionar sub-ramas
+  let lbScale = 1;
+  let lbX = 0;
+  let lbY = 0;
+  let lbDragging = false;
+  let lbStartX = 0;
+  let lbStartY = 0;
+  let lbPinchDist = null;
+
+  function applyLbTransform() {
+    const target = document.getElementById('img-lightbox-target');
+    const ind = document.getElementById('lb-zoom-indicator');
+    if (target) {
+      target.style.transform = `translate(${lbX}px, ${lbY}px) scale(${lbScale})`;
+    }
+    if (ind) {
+      ind.innerText = Math.round(lbScale * 100) + '%';
+    }
+  }
+
+  function setLbZoom(newScale) {
+    lbScale = Math.max(1, Math.min(5, newScale));
+    if (lbScale <= 1.02) {
+      lbX = 0;
+      lbY = 0;
+    }
+    applyLbTransform();
+  }
+
+  function changeLbZoom(delta) {
+    setLbZoom(lbScale + delta);
+  }
+
+  function resetLbZoom() {
+    lbScale = 1;
+    lbX = 0;
+    lbY = 0;
+    applyLbTransform();
+  }
+
+  function openLightbox(src, initialZoom = 1) {
     const lb = document.getElementById('img-lightbox');
     const target = document.getElementById('img-lightbox-target');
     if (lb && target && src) {
       target.src = src;
+      lbScale = initialZoom;
+      lbX = 0;
+      lbY = 0;
+      applyLbTransform();
       lb.classList.add('active');
     }
   }
@@ -1865,11 +2141,89 @@
   function closeLightbox() {
     const lb = document.getElementById('img-lightbox');
     if (lb) lb.classList.remove('active');
+    resetLbZoom();
   }
 
   window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.slide-img').forEach(img => {
-      img.addEventListener('click', () => openLightbox(img.src));
+      img.addEventListener('click', () => openLightbox(img.src, 1.0));
+    });
+
+    const vp = document.getElementById('lb-viewport');
+    if (!vp) return;
+
+    // Zoom con rueda del ratón
+    vp.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.35 : -0.35;
+      changeLbZoom(delta);
+    }, { passive: false });
+
+    // Doble clic para alternar zoom 2.5x en las sub-ramas
+    vp.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (lbScale > 1.2) {
+        resetLbZoom();
+      } else {
+        setLbZoom(2.5);
+      }
+    });
+
+    // Arrastre con ratón cuando hay zoom
+    vp.addEventListener('mousedown', (e) => {
+      if (lbScale <= 1.02) return;
+      lbDragging = true;
+      lbStartX = e.clientX - lbX;
+      lbStartY = e.clientY - lbY;
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!lbDragging) return;
+      lbX = e.clientX - lbStartX;
+      lbY = e.clientY - lbStartY;
+      applyLbTransform();
+    });
+    window.addEventListener('mouseup', () => {
+      lbDragging = false;
+    });
+
+    // Soporte táctil en el Lightbox (1 dedo panea, 2 dedos hacen pinch-zoom)
+    vp.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1 && lbScale > 1.02) {
+        lbDragging = true;
+        lbStartX = e.touches[0].clientX - lbX;
+        lbStartY = e.touches[0].clientY - lbY;
+      } else if (e.touches.length === 2) {
+        lbDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lbPinchDist = Math.hypot(dx, dy);
+      }
+    }, { passive: true });
+
+    vp.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && lbDragging) {
+        e.preventDefault();
+        lbX = e.touches[0].clientX - lbStartX;
+        lbY = e.touches[0].clientY - lbStartY;
+        applyLbTransform();
+      } else if (e.touches.length === 2 && lbPinchDist !== null) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const ratio = dist / lbPinchDist;
+        setLbZoom(lbScale * ratio);
+        lbPinchDist = dist;
+      }
+    }, { passive: false });
+
+    vp.addEventListener('touchend', () => {
+      lbDragging = false;
+      lbPinchDist = null;
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
     });
   });
 
