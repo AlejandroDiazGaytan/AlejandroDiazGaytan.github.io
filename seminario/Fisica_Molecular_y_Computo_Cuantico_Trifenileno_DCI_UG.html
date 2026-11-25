@@ -1,0 +1,2546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seminario MCA · Física Molecular y Cómputo Cuántico: Desentrañando la Espectroscopía de Alta Resolución del Trifenileno y algo más... · Alex Díaz Gaytán</title>
+
+<!-- Three.js para la molécula interactiva 3D del Trifenileno en Slide 0 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+  :root {
+    --bg-dark: #030712;
+    --card-bg: rgba(15, 23, 42, 0.82);
+    --border-color: rgba(255, 255, 255, 0.12);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary-blue: #38bdf8;
+    --accent-indigo: #6366f1;
+    --accent-emerald: #10b981;
+    --accent-rose: #f43f5e;
+    --accent-amber: #f59e0b;
+    --accent-purple: #a855f7;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* Barra de progreso de lectura superior */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+    width: 0%;
+    z-index: 1000;
+    transition: width 0.1s ease-out;
+  }
+
+  /* Puntos de navegación lateral */
+  #nav-dots {
+    position: fixed;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .dot:hover {
+    background: var(--primary-blue);
+    transform: scale(1.35);
+  }
+  .dot.active {
+    background: var(--primary-blue);
+    box-shadow: 0 0 10px var(--primary-blue);
+    transform: scale(1.4);
+  }
+
+  /* Secciones principales de presentación (Slides) */
+  section {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 65px 24px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .slide-container {
+    max-width: 1220px;
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 38px 44px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+  }
+
+  .slide-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--primary-blue);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #f1f5f9;
+  }
+
+  p {
+    color: #cbd5e1;
+    font-size: 16px;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Grids responsivos */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  /* Tarjetas de contenido */
+  .card-box {
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 22px;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+  .card-box:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+  }
+
+  .highlight-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin: 4px 0 8px 0;
+    font-family: monospace;
+  }
+  .highlight-green {
+    font-size: 24px;
+    font-weight: 800;
+    color: #10b981;
+    margin: 4px 0 8px 0;
+    font-family: monospace;
+  }
+
+  /* Imágenes en las slides */
+  .slide-img {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    background: #020617;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+  .slide-img:hover {
+    transform: scale(1.015);
+  }
+
+  /* FONDO MINIMALISTA OSCURO "ICEBERG DEEP TECH" */
+  #iceberg-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #030712;
+  }
+
+  .iceberg-mesh {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(ellipse 70% 45% at 50% -10%, rgba(56, 189, 248, 0.12), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 115%, rgba(14, 165, 233, 0.08), transparent 70%),
+      radial-gradient(circle at 10% 45%, rgba(99, 102, 241, 0.05), transparent 50%),
+      radial-gradient(circle at 90% 65%, rgba(16, 185, 129, 0.04), transparent 50%);
+  }
+
+  .iceberg-facets {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+    background-size: 60px 60px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 75%);
+  }
+
+  .iceberg-svg {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    max-width: 1500px;
+    height: 65vh;
+    opacity: 0.28;
+    pointer-events: none;
+  }
+
+  /* Cronología de Avances */
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .timeline-card {
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    transition: all 0.25s ease;
+  }
+  .timeline-card:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    background: rgba(30, 41, 59, 0.7);
+    transform: translateX(4px);
+  }
+  .timeline-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.15);
+    border: 2px solid var(--primary-blue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--primary-blue);
+  }
+
+  /* Acordeón de Preguntas Modelo Rompehielos (Slide 15) */
+  .qa-accordion {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .qa-item {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+  .qa-item:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+  .qa-header {
+    padding: 14px 20px;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #e2e8f0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .qa-header:hover {
+    color: #38bdf8;
+  }
+  .qa-content {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    font-size: 15px;
+    color: #94a3b8;
+    line-height: 1.6;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .qa-item.open .qa-content {
+    max-height: 350px;
+    padding: 12px 20px 18px 20px;
+    color: #cbd5e1;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(2, 6, 23, 0.45);
+  }
+  .qa-arrow {
+    transition: transform 0.25s ease;
+    font-size: 12px;
+    color: #38bdf8;
+  }
+  .qa-item.open .qa-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Tarjeta de Spam Electoral Estudiantil (Slide 16) */
+  .spam-box {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(88, 28, 135, 0.35) 100%);
+    border: 2px solid rgba(56, 189, 248, 0.5);
+    border-radius: 18px;
+    padding: 24px 30px;
+    margin-top: 20px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .spam-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    background: #f43f5e;
+    color: white;
+    font-size: 11.5px;
+    font-weight: 800;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  /* Canvas Molecular 3D (Slide 0) */
+  .molecule-wrapper {
+    position: relative;
+    width: 100%;
+    height: 390px;
+    border-radius: 18px;
+    background: radial-gradient(circle at center, rgba(30, 58, 138, 0.25) 0%, rgba(2, 6, 23, 0.8) 75%);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(56, 189, 248, 0.1);
+    overflow: hidden;
+  }
+  #molecule-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+  }
+  #molecule-canvas:active { cursor: grabbing; }
+
+  .mol-badge-overlay {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 12.5px;
+    color: #cbd5e1;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  /* Meme de Mr Increíble Perturbado con Paisajes 3D (Slide 6) */
+  .meme-container {
+    margin-top: 15px;
+  }
+  .meme-stage-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .meme-display {
+    display: grid;
+    grid-template-columns: 160px 1fr 300px;
+    gap: 22px;
+    align-items: center;
+    background: rgba(9, 13, 22, 0.9);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 22px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+  }
+  .meme-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 14px;
+    border: 3px solid #64748b;
+    overflow: hidden;
+    background: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+    flex-shrink: 0;
+  }
+  .meme-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+  .meme-landscape-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .meme-landscape-col img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  .stage-btn {
+    flex: 1;
+    padding: 10px 14px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13.5px;
+    transition: all 0.2s ease;
+    text-align: center;
+    user-select: none;
+  }
+  .stage-btn:hover {
+    transform: translateY(-2px);
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+  }
+  .stage-btn.active {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+  }
+  .stage-gold.active {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-color: #fbbf24;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  }
+
+  /* Controles inferiores flotantes */
+  #footer-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    padding: 10px 24px;
+    border-radius: 30px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+  .ctrl-btn {
+    background: none;
+    border: none;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .ctrl-btn:hover { 
+    color: var(--primary-blue); 
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  /* =========================================================================
+     MODO CLARO (LIGHT THEME) PARA SALAS MUY ILUMINADAS O PROYECTORES CLAROS
+     ========================================================================= */
+  body.light-theme {
+    --bg-dark: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(15, 23, 42, 0.12);
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --primary-blue: #0284c7;
+    --accent-indigo: #4f46e5;
+    --accent-emerald: #059669;
+    --accent-rose: #e11d48;
+    --accent-amber: #d97706;
+    --accent-purple: #9333ea;
+  }
+
+  body.light-theme #iceberg-bg {
+    background: radial-gradient(ellipse at 50% 15%, #f1f5f9 0%, #e2e8f0 60%, #cbd5e1 100%);
+    opacity: 0.65;
+  }
+
+  body.light-theme .slide-container {
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.09);
+  }
+
+  body.light-theme h1 {
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  body.light-theme h3 {
+    color: #0f172a;
+  }
+
+  body.light-theme p {
+    color: #334155;
+  }
+
+  body.light-theme .card-box {
+    background: rgba(241, 245, 249, 0.9);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  }
+
+  body.light-theme .card-box:hover {
+    border-color: #0284c7;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15);
+  }
+
+  body.light-theme #footer-controls {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(15, 23, 42, 0.16);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  }
+
+  body.light-theme .ctrl-btn {
+    color: #1e293b;
+  }
+  body.light-theme .ctrl-btn:hover {
+    color: #0284c7;
+    background: rgba(15, 23, 42, 0.06);
+  }
+
+  body.light-theme .dot {
+    background: rgba(15, 23, 42, 0.25);
+  }
+
+  body.light-theme .slide-img {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  }
+
+  body.light-theme .qa-item {
+    background: rgba(241, 245, 249, 0.85);
+    border-color: rgba(15, 23, 42, 0.12);
+  }
+
+  body.light-theme .qa-header {
+    color: #0f172a;
+  }
+
+  body.light-theme .qa-body {
+    color: #334155;
+  }
+
+  body.light-theme .stage-btn {
+    background: rgba(241, 245, 249, 0.95);
+    border-color: rgba(15, 23, 42, 0.16);
+    color: #1e293b;
+  }
+
+  body.light-theme .stage-btn.active {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+  }
+
+  body.light-theme .highlight-val {
+    color: #0284c7;
+  }
+  body.light-theme .highlight-green {
+    color: #059669;
+  }
+
+  /* Contraste profundo en Modo Claro para elementos con estilos inline o clases específicas */
+  body.light-theme ul,
+  body.light-theme ol,
+  body.light-theme li {
+    color: #334155 !important;
+  }
+
+  body.light-theme [style*="color: #ffffff"],
+  body.light-theme [style*="color:#ffffff"],
+  body.light-theme [style*="color: #f8fafc"],
+  body.light-theme [style*="color:#f8fafc"],
+  body.light-theme [style*="color: #f1f5f9"],
+  body.light-theme [style*="color:#f1f5f9"],
+  body.light-theme [style*="color: white"] {
+    color: #0f172a !important;
+  }
+
+  body.light-theme [style*="color: #cbd5e1"],
+  body.light-theme [style*="color:#cbd5e1"] {
+    color: #334155 !important;
+  }
+
+  body.light-theme [style*="color: #94a3b8"],
+  body.light-theme [style*="color:#94a3b8"] {
+    color: #475569 !important;
+  }
+
+  body.light-theme [style*="color: #38bdf8"],
+  body.light-theme [style*="color:#38bdf8"] {
+    color: #0284c7 !important;
+  }
+
+  body.light-theme [style*="color: #10b981"],
+  body.light-theme [style*="color:#10b981"] {
+    color: #059669 !important;
+  }
+
+  body.light-theme [style*="color: #f43f5e"],
+  body.light-theme [style*="color:#f43f5e"] {
+    color: #be123c !important;
+  }
+
+  body.light-theme [style*="color: #f59e0b"],
+  body.light-theme [style*="color:#f59e0b"] {
+    color: #b45309 !important;
+  }
+
+  body.light-theme .badge-blue {
+    background: rgba(2, 132, 199, 0.12) !important;
+    color: #0284c7 !important;
+    border: 1px solid rgba(2, 132, 199, 0.25) !important;
+  }
+  body.light-theme .badge-green {
+    background: rgba(5, 150, 105, 0.12) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(5, 150, 105, 0.25) !important;
+  }
+  body.light-theme .badge-rose {
+    background: rgba(190, 18, 60, 0.12) !important;
+    color: #be123c !important;
+    border: 1px solid rgba(190, 18, 60, 0.25) !important;
+  }
+  body.light-theme .badge-amber {
+    background: rgba(180, 83, 9, 0.12) !important;
+    color: #b45309 !important;
+    border: 1px solid rgba(180, 83, 9, 0.25) !important;
+  }
+
+  body.light-theme .slide-tag {
+    background: rgba(2, 132, 199, 0.1);
+    color: #0284c7;
+    border: 1px solid rgba(2, 132, 199, 0.3);
+  }
+
+  body.light-theme #meme-title {
+    color: #0284c7 !important;
+  }
+  body.light-theme #meme-desc {
+    color: #334155 !important;
+  }
+  body.light-theme #meme-landscape-caption {
+    color: #475569 !important;
+  }
+
+  /* Corrección de contraste en Modo Claro para tarjetas especiales y correo en Slide 16 */
+  body.light-theme .spam-box {
+    background: linear-gradient(135deg, rgba(224, 242, 254, 0.96) 0%, rgba(243, 232, 255, 0.96) 100%) !important;
+    border: 2px solid rgba(2, 132, 199, 0.45) !important;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
+  }
+  body.light-theme .contact-pill-box {
+    background: #ffffff !important;
+    border: 2px solid #0284c7 !important;
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.14) !important;
+  }
+  body.light-theme .contact-pill-box p {
+    color: #0f172a !important;
+  }
+  body.light-theme .contact-pill-box .contact-label {
+    color: #0284c7 !important;
+  }
+  body.light-theme .meme-display {
+    background: rgba(241, 245, 249, 0.96) !important;
+    border-color: rgba(2, 132, 199, 0.3) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08) !important;
+  }
+  body.light-theme .timeline-card {
+    background: rgba(241, 245, 249, 0.92) !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  body.light-theme .qa-item.open .qa-content {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #334155 !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+  body.light-theme .mol-badge-overlay {
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: #0f172a !important;
+    border-color: rgba(2, 132, 199, 0.35) !important;
+  }
+
+  /* Selector de vista / zoom de sub-ramas en Slide 10 */
+  .zoom-tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .zoom-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #e2e8f0;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .zoom-tab-btn:hover {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.18);
+  }
+  .zoom-tab-btn.active {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+  }
+  body.light-theme .zoom-tab-btn {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: rgba(2, 132, 199, 0.3);
+  }
+  body.light-theme .zoom-tab-btn.active {
+    background: #0284c7;
+    color: #ffffff;
+  }
+  .super-zoom-trigger {
+    margin-top: 8px;
+    width: 100%;
+    padding: 8px 14px;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #10b981;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .super-zoom-trigger:hover {
+    background: rgba(16, 185, 129, 0.25);
+    transform: translateY(-1px);
+  }
+  body.light-theme .super-zoom-trigger {
+    background: rgba(5, 150, 105, 0.12);
+    color: #059669;
+    border-color: rgba(5, 150, 105, 0.4);
+  }
+
+  /* Badges */
+  .badge-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge-blue { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+  .badge-green { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+  .badge-rose { background: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+  .badge-amber { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+  /* Escudo Oficial de la Universidad de Guanajuato */
+  .ug-shield-badge {
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+  }
+  .ug-shield-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(56, 189, 248, 0.35);
+  }
+  .ug-shield-img {
+    height: 56px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+  body.light-theme .ug-shield-badge {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  }
+
+  @media (max-width: 960px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 16px; }
+    section { min-height: auto; padding: 32px 14px; }
+    section:last-of-type { padding-bottom: 100px; }
+    .slide-container { padding: 24px 18px; border-radius: 18px; }
+    h1 { font-size: 24px; line-height: 1.28; }
+    h2 { font-size: 17.5px !important; line-height: 1.38; margin-bottom: 18px !important; }
+    .meme-display { grid-template-columns: 1fr; text-align: center; padding: 16px; gap: 14px; }
+    .meme-avatar { margin: 0 auto; width: 135px; height: 135px; }
+    .meme-text-col > div { justify-content: center; }
+    .timeline-card { grid-template-columns: 1fr; text-align: center; padding: 14px; gap: 10px; }
+    .timeline-badge { margin: 0 auto; }
+    .molecule-wrapper { height: 290px; }
+  }
+
+  #molecule-canvas {
+    touch-action: none;
+  }
+
+  .slide-img {
+    cursor: zoom-in;
+  }
+
+  /* Lightbox con Super-Zoom Interactivo (1x a 5x) y Paneo para inspeccionar sub-ramas */
+  #img-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 2500;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    flex-direction: column;
+    gap: 10px;
+    user-select: none;
+  }
+  #img-lightbox.active {
+    display: flex;
+  }
+  #lb-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    padding: 8px 14px;
+    border-radius: 24px;
+    z-index: 2510;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  }
+  .lb-btn {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .lb-btn:hover {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.25);
+  }
+  .lb-btn-accent {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #34d399;
+  }
+  .lb-btn-close {
+    background: rgba(244, 63, 94, 0.22);
+    border-color: rgba(244, 63, 94, 0.5);
+    color: #fda4af;
+  }
+  #lb-viewport {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+  }
+  #lb-viewport:active {
+    cursor: grabbing;
+  }
+  #img-lightbox-target {
+    max-width: 95vw;
+    max-height: 78vh;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    background: #020617;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+    transform-origin: center center;
+    transition: transform 0.08s ease-out;
+    pointer-events: none;
+  }
+  body.light-theme #img-lightbox-target {
+    background: #ffffff;
+  }
+  #lb-hint {
+    font-size: 12px;
+    color: #94a3b8;
+    text-align: center;
+  }
+
+  /* Optimización específica para smartphones (Pantallas <= 640px) */
+  @media (max-width: 640px) {
+    section { padding: 14px 10px; }
+    section:first-of-type { padding-top: 12px; }
+    section:last-of-type { padding-bottom: 92px; }
+    .slide-container { padding: 18px 14px; border-radius: 16px; }
+    h1 { font-size: 20px; line-height: 1.26; margin-bottom: 10px; }
+    h2 { font-size: 15px !important; line-height: 1.35; margin-bottom: 14px !important; }
+    h3 { font-size: 16px; }
+    p, li { font-size: 14px; line-height: 1.52; }
+    .card-box { padding: 14px; border-radius: 13px; }
+    .highlight-val, .highlight-green { font-size: 19px !important; }
+    .ug-shield-img { height: 42px; }
+    .ug-shield-badge { padding: 4px 8px; border-radius: 10px; }
+    .slide-tag { font-size: 10px; padding: 4px 10px; letter-spacing: 0.4px; margin-bottom: 8px; }
+    #nav-dots { right: 4px; gap: 5px; }
+    .dot { width: 6px; height: 6px; }
+    .molecule-wrapper { height: 245px; border-radius: 14px; }
+    .mol-badge-overlay {
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      padding: 4px 10px;
+      font-size: 10.5px;
+      justify-content: center;
+      text-align: center;
+    }
+    .meme-stage-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .meme-stage-selector .stage-gold {
+      grid-column: 1 / -1;
+    }
+    .stage-btn { font-size: 12px; padding: 8px 8px; }
+    .qa-header { padding: 12px 14px; font-size: 14px; gap: 8px; }
+    .qa-item.open .qa-content { max-height: 600px; padding: 10px 14px 14px 14px; font-size: 13.5px; }
+    .spam-box { padding: 16px; gap: 14px; }
+    .spam-box > div { width: 100%; min-width: 0 !important; text-align: center !important; }
+    [style*="font-family: monospace"] {
+      font-size: 13px !important;
+      word-break: break-word;
+      overflow-x: auto;
+    }
+    #footer-controls {
+      width: calc(100vw - 16px);
+      max-width: 430px;
+      bottom: 10px;
+      padding: 7px 12px;
+      gap: 4px;
+      justify-content: space-between;
+      border-radius: 22px;
+    }
+    #footer-controls .ctrl-sep {
+      display: none;
+    }
+    .ctrl-btn {
+      font-size: 12.5px;
+      padding: 6px 9px;
+      white-space: nowrap;
+    }
+    .hide-mobile {
+      display: none;
+    }
+    #slide-counter {
+      font-size: 12.5px !important;
+      white-space: nowrap;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- FONDO MINIMALISTA OSCURO "ICEBERG DEEP TECH" -->
+<div id="iceberg-bg">
+  <div class="iceberg-mesh"></div>
+  <div class="iceberg-facets"></div>
+  <svg class="iceberg-svg" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="600,80 380,320 540,280" fill="rgba(56,189,248,0.06)" stroke="rgba(56,189,248,0.25)" stroke-width="1.2"/>
+    <polygon points="600,80 540,280 720,270" fill="rgba(14,165,233,0.08)" stroke="rgba(56,189,248,0.3)" stroke-width="1.2"/>
+    <polygon points="600,80 720,270 820,330" fill="rgba(99,102,241,0.05)" stroke="rgba(99,102,241,0.25)" stroke-width="1.2"/>
+    <polygon points="380,320 220,520 420,490" fill="rgba(56,189,248,0.04)" stroke="rgba(56,189,248,0.2)" stroke-width="1.2"/>
+    <polygon points="380,320 420,490 540,280" fill="rgba(14,165,233,0.06)" stroke="rgba(56,189,248,0.25)" stroke-width="1.2"/>
+    <polygon points="540,280 420,490 620,530" fill="rgba(56,189,248,0.07)" stroke="rgba(56,189,248,0.25)" stroke-width="1.2"/>
+    <polygon points="540,280 620,530 720,270" fill="rgba(30,58,138,0.09)" stroke="rgba(56,189,248,0.28)" stroke-width="1.2"/>
+    <polygon points="720,270 620,530 800,510" fill="rgba(56,189,248,0.05)" stroke="rgba(56,189,248,0.22)" stroke-width="1.2"/>
+    <polygon points="720,270 800,510 820,330" fill="rgba(99,102,241,0.06)" stroke="rgba(99,102,241,0.2)" stroke-width="1.2"/>
+    <polygon points="820,330 800,510 980,530" fill="rgba(56,189,248,0.03)" stroke="rgba(56,189,248,0.18)" stroke-width="1.2"/>
+    <polygon points="420,490 290,750 510,720" fill="rgba(14,165,233,0.03)" stroke="rgba(56,189,248,0.15)" stroke-width="1"/>
+    <polygon points="420,490 510,720 620,530" fill="rgba(56,189,248,0.05)" stroke="rgba(56,189,248,0.18)" stroke-width="1"/>
+    <polygon points="620,530 510,720 730,760" fill="rgba(30,58,138,0.06)" stroke="rgba(56,189,248,0.2)" stroke-width="1"/>
+    <polygon points="620,530 730,760 800,510" fill="rgba(56,189,248,0.04)" stroke="rgba(56,189,248,0.16)" stroke-width="1"/>
+    <polygon points="800,510 730,760 910,740" fill="rgba(99,102,241,0.04)" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
+    <circle cx="600" cy="80" r="3" fill="#38bdf8"/>
+    <circle cx="380" cy="320" r="2.5" fill="#38bdf8"/>
+    <circle cx="540" cy="280" r="2.5" fill="#38bdf8"/>
+    <circle cx="720" cy="270" r="2.5" fill="#38bdf8"/>
+    <circle cx="820" cy="330" r="2.5" fill="#38bdf8"/>
+    <circle cx="620" cy="530" r="2.5" fill="#38bdf8"/>
+  </svg>
+</div>
+
+<div id="progress-bar"></div>
+
+<!-- NAVEGACIÓN LATERAL (17 SLIDES) -->
+<div id="nav-dots">
+  <div class="dot active" onclick="scrollToSlide(0)" title="0. Portada"></div>
+  <div class="dot" onclick="scrollToSlide(1)" title="1. ¿Qué es Espectroscopía?"></div>
+  <div class="dot" onclick="scrollToSlide(2)" title="2. ¿Por qué Rovibrónica?"></div>
+  <div class="dot" onclick="scrollToSlide(3)" title="3. Objeto: Trifenileno"></div>
+  <div class="dot" onclick="scrollToSlide(4)" title="4. Chorro Frío & La Licuadora"></div>
+  <div class="dot" onclick="scrollToSlide(5)" title="5. Colapso del Modelo Rígido"></div>
+  <div class="dot" onclick="scrollToSlide(6)" title="6. Meme Mr. Increíble & 3D"></div>
+  <div class="dot" onclick="scrollToSlide(7)" title="7. Solución Coriolis"></div>
+  <div class="dot" onclick="scrollToSlide(8)" title="8. Arquitectura Matemática"></div>
+  <div class="dot" onclick="scrollToSlide(9)" title="9. El Cuello de Botella: Rama R"></div>
+  <div class="dot" onclick="scrollToSlide(10)" title="10. Watson & 4 Subramas"></div>
+  <div class="dot" onclick="scrollToSlide(11)" title="11. Cronología de Récords"></div>
+  <div class="dot" onclick="scrollToSlide(12)" title="12. Defensa Ciencias Aplicadas"></div>
+  <div class="dot" onclick="scrollToSlide(13)" title="13. Conclusiones de Tesis"></div>
+  <div class="dot" onclick="scrollToSlide(14)" title="14. Agradecimientos & Preguntas"></div>
+  <div class="dot" onclick="scrollToSlide(15)" title="15. Preguntas Modelo Estudiantes"></div>
+  <div class="dot" onclick="scrollToSlide(16)" title="16. Votación Consejo DCI"></div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 0: PORTADA -->
+<!-- ======================================================================= -->
+<section id="slide-0">
+  <div class="slide-container">
+    <!-- Encabezado Institucional con Escudo Oficial UG -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; margin-bottom: 22px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <div class="ug-shield-badge">
+          <img src="images/ug_escudo.png" alt="Escudo Oficial Universidad de Guanajuato" class="ug-shield-img">
+        </div>
+        <div>
+          <span class="slide-tag" style="margin-bottom: 4px;">Seminario Departamental · Maestría en Ciencias Aplicadas</span>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin: 0; font-weight: 600;">
+            Universidad de Guanajuato · División de Ciencias e Ingenierías · Campus León
+          </p>
+        </div>
+      </div>
+      <div>
+        <span style="font-size: 12px; font-weight: 700; color: var(--primary-blue); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+          Semestre AD 2026
+        </span>
+      </div>
+    </div>
+
+    <h1>Física Molecular y Cómputo Cuántico: Desentrañando la Espectroscopía de Alta Resolución del Trifenileno y algo más...</h1>
+    <h2 style="color: var(--primary-blue); font-size: 21px; margin-bottom: 25px;">
+      Implementación y Ajuste de Contorno Automatizado en Software Espectroscópico Especializado
+    </h2>
+
+    <div class="grid-2">
+      <div class="card-box" style="border-left: 4px solid var(--primary-blue);">
+        <p style="margin-bottom: 6px; font-size: 14px; text-transform: uppercase; color: var(--primary-blue); font-weight: 700;">Ponente</p>
+        <p style="font-size: 21px; font-weight: 800; color: #ffffff; margin-bottom: 12px;">Ing. Miguel Alejandro Díaz Gaytán</p>
+        <p style="font-size: 15px; margin-bottom: 5px;"><strong>Directores:</strong> Dr. Leonardo Álvarez-Valtierra (DCI-UG) & Dr. Mario Ulises Delgado-Jaime (UdeG)</p>
+        <p style="font-size: 15px; margin-bottom: 5px;"><strong>Co-asesor:</strong> Dr. Jaime Valdez-Ruvalcaba (UG)</p>
+        <p style="font-size: 14px; color: #38bdf8;">Apoyo de Ayudantía SNII Nivel III: Dr. Alejandro Gil-Villegas Montiel</p>
+      </div>
+
+      <div>
+        <div class="molecule-wrapper">
+          <div id="molecule-canvas"></div>
+          <div class="mol-badge-overlay">
+            <span class="pulse-dot"></span>
+            <span>Trifenileno (C₁₈H₁₂) · Rotor Simétrico Oblato (κ = +0.998)</span>
+          </div>
+        </div>
+        <p style="font-size: 12px; text-align: center; margin-top: 8px; color: var(--text-muted);">
+          <strong style="color: #38bdf8;">Estructura Molecular 3D Rigurosa (RDKit):</strong> Giro oblato axial lento | 18 Carbonos (anillo central de 6C) | 12 Hidrógenos perimétricos sin impedimento estérico.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 1: FUNDAMENTOS: ¿QUÉ ES LA ESPECTROSCOPÍA? -->
+<!-- ======================================================================= -->
+<section id="slide-1">
+  <div class="slide-container">
+    <span class="slide-tag">Fundamentos Físico-Químicos · Escalas de Energía</span>
+    <h1>¿Qué es la Espectroscopía y cuáles son sus Tres Ramas Principales?</h1>
+    <p style="font-size: 16.5px;">
+      La espectroscopía es el estudio de la interacción entre la radiación electromagnética y la materia, permitiéndonos descifrar los niveles cuánticos discretos de los átomos y moléculas:
+    </p>
+
+    <div class="grid-3" style="margin-top: 22px;">
+      <div class="card-box" style="border-top: 4px solid var(--accent-purple);">
+        <div style="font-size: 30px; margin-bottom: 8px;">⚡</div>
+        <h3 style="color: var(--accent-purple);">1. Espectroscopía Electrónica (UV-Vis)</h3>
+        <p style="font-size: 13px; color: #38bdf8; font-weight: 700; margin-bottom: 6px;">ΔE ~ 2 – 6 eV | λ ~ 200 – 700 nm</p>
+        <p style="font-size: 14.5px;">Promueve electrones de valencia entre orbitales moleculares (π* &larr; π). Fija el <strong>origen electrónico</strong> (<i>S</i>₁ &larr; <i>S</i>₀). A temperatura ambiente suele ser solo una campana ancha sin detalle de líneas.</p>
+      </div>
+
+      <div class="card-box" style="border-top: 4px solid var(--accent-rose);">
+        <div style="font-size: 30px; margin-bottom: 8px;">〰️</div>
+        <h3 style="color: var(--accent-rose);">2. Espectroscopía Vibracional (Infrarrojo IR)</h3>
+        <p style="font-size: 13px; color: #f43f5e; font-weight: 700; margin-bottom: 6px;">ΔE ~ 0.05 – 0.5 eV | λ ~ 2.5 – 25 µm</p>
+        <p style="font-size: 14.5px;">Mide oscilaciones periódicas de los núcleos atómicos alrededor de su posición de equilibrio. En moléculas aromáticas planas activa modos de vibración degenerados en el plano (<i>e'</i>).</p>
+      </div>
+
+      <div class="card-box" style="border-top: 4px solid var(--accent-emerald);">
+        <div style="font-size: 30px; margin-bottom: 8px;">🔄</div>
+        <h3 style="color: var(--accent-emerald);">3. Espectroscopía Rotacional (Microondas / GHz)</h3>
+        <p style="font-size: 13px; color: #10b981; font-weight: 700; margin-bottom: 6px;">ΔE ~ 10⁻⁴ eV | ν ~ 1 – 100 GHz</p>
+        <p style="font-size: 14.5px;">Cuantiza el momento angular de giro molecular global (<i>J, K</i>). Sus micro-espaciados codifican directamente los <strong>momentos de inercia y la geometría 3D</strong> (constantes <i>A, B, C</i>).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 2: ¿POR QUÉ ROVIBRÓNICA PARA EL TRIFENILENO? -->
+<!-- ======================================================================= -->
+<section id="slide-2">
+  <div class="slide-container">
+    <span class="slide-tag">El Enigma Cuántico</span>
+    <h1>¿Por qué la Espectroscopía Rovibrónica es Indispensable?</h1>
+
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 17px; color: #ffffff;">
+          En una molécula poliaromática plana como el Trifenileno, la transición electrónica pura está <strong>estrictamente prohibida por simetría dipolar</strong>:
+        </p>
+        <div class="card-box" style="margin: 16px 0; border-left: 4px solid var(--accent-rose);">
+          <p style="font-family: monospace; font-size: 16.5px; color: #f43f5e; margin: 0;">
+            ⟨S₁ | &mu; | S₀⟩ = 0 &nbsp;&nbsp;&rArr;&nbsp;&nbsp; Transición Dipolar Prohibida
+          </p>
+        </div>
+        <p>
+          La banda fluorescente observada experimentalmente existe gracias al <strong>acoplamiento rovibrónico (falso origen Herzberg-Teller)</strong> inducido por un modo vibracional degenerado en el plano (<i>e'</i>).
+        </p>
+        <p>
+          Al usar un láser de alta resolución dentro de un chorro supersónico, no medimos una simple absorción UV: <strong>resolvemos las líneas rotacionales individuales (J, K) montadas sobre la transición vibrónica</strong>.
+        </p>
+      </div>
+
+      <div class="card-box" style="background: rgba(14, 165, 233, 0.08); border-left: 4px solid var(--primary-blue);">
+        <h3 style="color: #38bdf8;">La Intersección de Tres Escalas Físicas</h3>
+        <ul style="padding-left: 20px; font-size: 15px; color: #cbd5e1; line-height: 1.8;">
+          <li><strong>Electrónica:</strong> El fotón láser excita del estado fundamental <i>S</i>₀ al excitado <i>S</i>₁ (~300 nm).</li>
+          <li><strong>Vibracional:</strong> El modo <i>e'</i> genera un momento angular vibracional intrínseco (<i>&ell;</i> = &plusmn;1).</li>
+          <li><strong>Rotacional:</strong> La molécula rota en el espacio cuántico con momentos <i>J</i> y proyecciones <i>K</i>.</li>
+        </ul>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 12px; margin-bottom: 0;">
+          Solo modelando simultáneamente estas 3 interacciones cuánticas es posible simular la envolvente espectral real.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 3: EL OBJETO DE ESTUDIO: TRIFENILENO -->
+<!-- ======================================================================= -->
+<section id="slide-3">
+  <div class="slide-container">
+    <span class="slide-tag">Molécula Modelo</span>
+    <h1>El Objeto de Estudio: Trifenileno (C₁₈H₁₂)</h1>
+
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 16.5px;">
+          El <strong>Trifenileno</strong> es un hidrocarburo aromático policíclico (PAH) completamente plano formado por cuatro anillos bencénicos fusionados en una geometría molecular de alta simetría inercial.
+        </p>
+
+        <div class="card-box" style="margin: 18px 0; border-left: 4px solid var(--primary-blue);">
+          <h3 style="color: var(--primary-blue); font-size: 17px;">Astrofísica Interestelar</h3>
+          <p style="font-size: 14.5px; margin: 0;">Los PAHs concentran hasta el 20% del carbono galáctico y son los portadores de las Bandas Infrarrojas No Identificadas (UIRs) captadas por el telescopio espacial James Webb.</p>
+        </div>
+
+        <div class="card-box" style="border-left: 4px solid var(--accent-emerald);">
+          <h3 style="color: var(--accent-emerald); font-size: 17px;">Electrónica Molecular & OLEDs</h3>
+          <p style="font-size: 14.5px; margin: 0;">Es el prototipo por excelencia de <strong>cristal líquido discótico</strong>: sus moléculas se autoensamblan en columnas coaxiales con transporte unidimensional ultrarrápido de carga eléctrica.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card-box" style="text-align: center;">
+          <h3 style="color: #38bdf8; margin-bottom: 10px;">Clasificación Inercial</h3>
+          <p class="highlight-val" style="font-size: 28px;">κ = +0.998</p>
+          <p style="font-size: 15px; color: #ffffff; font-weight: 700;">Rotor Simétrico Oblato Casi Perfecto</p>
+          <p style="font-size: 14px; color: var(--text-muted); margin-top: 6px; margin-bottom: 0;">
+            Sus dos momentos de inercia mayores son casi idénticos en el plano (<i>A &approx; B &gt; C</i>), mientras que el eje <i>C</i> perpendicular al disco domina la rotación axial oblata.
+          </p>
+        </div>
+
+        <div class="card-box" style="border-left: 4px solid var(--accent-amber);">
+          <span class="badge-tag badge-amber" style="margin-bottom: 6px;">Vacío Histórico en la Literatura</span>
+          <h3 style="color: var(--accent-amber); font-size: 16.5px;">¿Por qué no existían constantes rotacionales del Trifenileno?</h3>
+          <p style="font-size: 13.8px; margin-bottom: 6px;">
+            <strong>1. Invisible en Microondas (<i>&mu;</i>₀ = 0 D):</strong> Por su alta simetría apolar, carece de espectro rotacional puro en microondas (FTMW).
+          </p>
+          <p style="font-size: 13.8px; margin: 0;">
+            <strong>2. Límite Vibrónico Previo:</strong> Los estudios previos en chorro supersónico (<strong>Kokkin et al., <i>J. Chem. Phys.</i> 2007</strong>) solo alcanzaron resolución vibrónica (~0.1–1 cm⁻¹ &approx; 3–30 GHz), sin poder resolver el contorno rotacional ni reportar <i>A, B, C</i>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 4: EL RETO EXPERIMENTAL: CHORRO FRÍO A 3 KELVIN & LA LICUADORA -->
+<!-- ======================================================================= -->
+<section id="slide-4">
+  <div class="slide-container">
+    <span class="slide-tag">Técnica Experimental de Laboratorio</span>
+    <h1>Chorro Supersónico Frío (3 Kelvin) & El Espectro <code>pmt-nFLa</code></h1>
+
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 16px;">
+          A temperatura ambiente (300 K), una molécula de 18 carbonos puebla millones de estados rotacionales simultáneos, generando un continuo térmico ininteligible.
+        </p>
+        <div class="card-box" style="border-left: 4px solid var(--primary-blue); margin: 14px 0; padding: 16px;">
+          <h3 style="color: var(--primary-blue); font-size: 17px;">Enfriamiento Adiabático en Tobera (LIF)</h3>
+          <p style="font-size: 14.5px; margin: 0;">
+            El vapor se diluye en Helio a alta presión y se expande al vacío. Las colisiones elásticas colapsan la temperatura rotacional a <strong><i>T</i><sub>rot</sub> = 3.04 K</strong>, congelando niveles térmicos con <i>J &gt; 50</i>.
+          </p>
+        </div>
+        <p style="font-size: 14.5px;">
+          Contamos con el archivo experimental real <strong><code>pmt-nFLa</code> (1,423 puntos)</strong> registrado mediante un <strong>Espectrómetro de Haz Molecular Supersónico con Fluorescencia Inducida por Láser (LIF) de Ultra-Alta Resolución</strong> (asociado a los estudios pioneros del Dr. Leonardo Álvarez-Valtierra en colaboración con el grupo del Dr. David W. Pratt en la región de 910,215 a 910,258 MHz).
+        </p>
+      </div>
+
+      <div>
+        <!-- ANALOGÍA PEDAGÓGICA DE LA LICUADORA -->
+        <div class="card-box" style="border-left: 4px solid var(--accent-amber); background: rgba(245, 158, 11, 0.08); padding: 20px;">
+          <h3 style="color: #f59e0b; margin-bottom: 8px; font-size: 18px;">💡 La Analogía Pedagógica: La Llave en la Licuadora</h3>
+          <p style="font-size: 15px; line-height: 1.6; margin-bottom: 10px;">
+            A temperatura ambiente (300 K), las moléculas giran y chocan caóticamente a miles de revoluciones por segundo: intentar registrar su espectro es exactamente como <strong>querer leer las ranuras finas de una llave girando dentro de una licuadora encendida</strong> (solo verías un borrón indistinguible).
+          </p>
+          <p style="font-size: 15px; line-height: 1.6; margin: 0; color: #f8fafc;">
+            La técnica del chorro supersónico a 3 Kelvin es el equivalente físico a <strong>apagar la licuadora, sacar la llave congelada en el espacio y calcar con un lápiz milimétrico cada una de sus ranuras en una hoja limpia</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 5: EL COLAPSO DEL ROTOR PLANO RÍGIDO -->
+<!-- ======================================================================= -->
+<section id="slide-5">
+  <div class="slide-container">
+    <span class="slide-tag">El Muro Teórico</span>
+    <h1>La Paradoja Inercial: Cuando el Modelo Rígido Falla</h1>
+
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 17px; color: #ffffff;">
+          En un rotor oblato plano rígido ideal, la relación inercial estricta dicta:
+        </p>
+        <div class="card-box" style="margin: 18px 0; border-left: 4px solid var(--accent-rose);">
+          <p style="font-family: monospace; font-size: 18px; color: #f43f5e; margin: 0;">
+            C = (A · B) / (A + B) = B / 2 &nbsp;&nbsp;&rArr;&nbsp;&nbsp; 2(B - 2C) = 0
+          </p>
+        </div>
+        <p>
+          Este término nulo <strong>colapsa matemáticamente los desdoblamientos de los bloques de Wang</strong>. Como consecuencia, las líneas rotacionales se superponen de forma artificial y el ajuste del espectro se estrella:
+        </p>
+        <div style="display: flex; gap: 15px; margin-top: 15px;">
+          <div class="card-box" style="flex: 1; text-align: center;">
+            <p style="font-size: 12px; margin: 0;">Rotor Plano Rígido</p>
+            <p class="highlight-val" style="color: #f43f5e;">r = 16.77%</p>
+            <p style="font-size: 12px; margin: 0;">(Ajuste deficiente)</p>
+          </div>
+          <div class="card-box" style="flex: 1; text-align: center;">
+            <p style="font-size: 12px; margin: 0;">Error Cuadrático SSE</p>
+            <p class="highlight-val" style="color: #f43f5e;">SSE &gt; 38.0</p>
+            <p style="font-size: 12px; margin: 0;">(Líneas desfasadas)</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <img src="images/1_Trifenileno_Comparativa_ScoreSolver_Global.png" alt="Comparativa ScoreSolver" class="slide-img">
+        <p style="font-size: 12px; text-align: center; margin-top: 6px;">Evidencia experimental: El modelo rígido tradicional colapsa la intensidad rotacional (SSE &gt; 22.18).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 6: MEME INTERACTIVO - MR INCREÍBLE PERTURBADO & PAISAJES 3D -->
+<!-- ======================================================================= -->
+<section id="slide-6">
+  <div class="slide-container">
+    <span class="slide-tag">Humor Físico-Computacional</span>
+    <h1>La Pesadilla de los Mínimos Locales en Espacios Multidimensionales</h1>
+    <p style="font-size: 16px;">
+      ¿Qué le ocurre al optimizador cuando aumentamos la dimensión del Hamiltoniano? (Pasa el ratón por las fases):
+    </p>
+
+    <div class="meme-container">
+      <div class="meme-stage-selector">
+        <button class="stage-btn active" onmouseenter="setMemeStage(1)" onclick="setMemeStage(1)">Fase 1: Carbazol</button>
+        <button class="stage-btn" onmouseenter="setMemeStage(2)" onclick="setMemeStage(2)">Fase 2: Rotor Plano Rígido</button>
+        <button class="stage-btn" onmouseenter="setMemeStage(3)" onclick="setMemeStage(3)">Fase 3: Coriolis Libre</button>
+        <button class="stage-btn" onmouseenter="setMemeStage(4)" onclick="setMemeStage(4)">Fase 4: Watson + Láser</button>
+        <button class="stage-btn stage-gold" onmouseenter="setMemeStage(5)" onclick="setMemeStage(5)">Fase 5: Optimización Global (Récord)</button>
+      </div>
+
+      <div class="meme-display">
+        <div class="meme-avatar">
+          <img id="meme-img" src="images/mr_incredible_1.png" alt="Mr. Increíble Meme">
+        </div>
+        <div class="meme-text-col">
+          <h2 id="meme-title" style="color: #38bdf8; font-size: 21px; margin-bottom: 6px;">Fase 1: Molécula Sencilla (Carbazol)</h2>
+          <p id="meme-desc" style="font-size: 15px; color: #cbd5e1; margin-bottom: 12px;">
+            3 parámetros rotacionales libres (A, B, C). Espacio suave y convexo. Cualquier gradiente descendente converge en 0.2 segundos. La vida es bella y creemos que nos graduaremos en 6 meses.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <span class="badge-tag badge-blue" id="meme-dim">Dimensión: ℝ³ (Espacio Convexo)</span>
+            <span class="badge-tag badge-green" id="meme-corr">Correlación: 98.8%</span>
+          </div>
+        </div>
+        <div class="meme-landscape-col">
+          <img id="meme-landscape" src="images/landscape_stage_1_convex.png" alt="Paisaje de Energía 3D" class="slide-img">
+          <p id="meme-landscape-caption" style="font-size: 11px; text-align: center; margin-top: 5px; color: #94a3b8;">
+            Paisaje cuadrático convexo suave (1 mínimo global único)
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 7: LA SOLUCIÓN FÍSICA: ACOPLAMIENTO DE CORIOLIS -->
+<!-- ======================================================================= -->
+<section id="slide-7">
+  <div class="slide-container">
+    <span class="slide-tag">El Avance Espectroscópico</span>
+    <h1>La Solución Física: Acoplamiento de Coriolis de 1er Orden en Rotores Planos</h1>
+
+    <div class="grid-2">
+      <div>
+        <p>
+          La transición observada no es una banda pura permitida, sino un <strong>falso origen inducido por acoplamiento vibrónico (Herzberg-Teller)</strong> a través de un modo degenerado en el plano (<i>e'</i>).
+        </p>
+        <p>
+          El momento angular vibracional (&ell; = &plusmn;1) se acopla directamente con la rotación molecular rompiendo la restricción inercial estricta, lo que renormaliza la constante axial efectiva:
+        </p>
+        <div class="card-box" style="border-left: 4px solid var(--accent-emerald);">
+          <p style="font-family: monospace; font-size: 18px; color: #10b981; margin: 0;">
+            C<sub>eff</sub> = C<sub>plano</sub> · (1 - &zeta;<sub>eff</sub>) &approx; 279.84 MHz
+          </p>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
+            (frente a <i>C</i><sub>plano</sub> = 252.6 MHz del modelo rígido ideal)
+          </p>
+        </div>
+        <p>
+          Al liberar este grado de libertad cuántico en el software, la correlación global salta de <strong>16.77% a 56.33%</strong> y la Rama R alcanza un récord inicial de <strong>84.05%</strong>.
+        </p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card-box" style="border-left: 4px solid var(--primary-blue);">
+          <span class="badge-tag badge-blue" style="margin-bottom: 8px;">Comparativa Espectroscópica</span>
+          <h3 style="font-size: 16px; margin-bottom: 10px;">Impacto de Liberar el Eje Axial (Coriolis)</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+            <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+              <p style="font-size: 11.5px; font-weight: 700; color: var(--accent-rose); margin-bottom: 4px;">MODELO PLANO RÍGIDO</p>
+              <p style="font-size: 20px; font-weight: 800; color: var(--accent-rose); margin: 0; font-family: monospace;">r = 16.77%</p>
+              <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">C = B/2 = 252.6 MHz (Wang colapsado)</p>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+              <p style="font-size: 11.5px; font-weight: 700; color: var(--accent-emerald); margin-bottom: 4px;">CON ACOPLE DE CORIOLIS</p>
+              <p style="font-size: 20px; font-weight: 800; color: var(--accent-emerald); margin: 0; font-family: monospace;">r = 56.33%</p>
+              <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">C<sub>eff</sub> = 279.84 MHz (Rama R al 84%)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-box" style="border-left: 4px solid var(--accent-amber);">
+          <span class="badge-tag badge-amber" style="margin-bottom: 8px;">Constantes Físicas Fundamentales</span>
+          <h3 style="font-size: 16px; margin-bottom: 8px;">Geometría y Rotación del Trifenileno</h3>
+          <ul style="padding-left: 18px; font-size: 13.5px; line-height: 1.7; margin-bottom: 0;">
+            <li><strong>Constantes en el plano:</strong> <i>A″</i> = 506.89 MHz, <i>B″</i> = 506.45 MHz (diferencia mínima inercial).</li>
+            <li><strong>Eje axial renormalizado:</strong> <i>C<sub>eff</sub></i> = 279.84 MHz (absorbe el momento angular vibracional &ell; = &plusmn;1).</li>
+            <li><strong>Parámetro de asimetría:</strong> &kappa; = +0.9961 (comportamiento oblato casi perfecto).</li>
+            <li><strong>Sub-picos resueltos:</strong> Al ser 2(B - 2C<sub>eff</sub>) &ne; 0, se desbloquean los desdoblamientos a &minus;90.4 MHz.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 8: LA ARQUITECTURA MATEMÁTICA: MATRICES VS OPTIMIZACIÓN GLOBAL -->
+<!-- ======================================================================= -->
+<section id="slide-8">
+  <div class="slide-container">
+    <span class="slide-tag">El Núcleo Teórico-Computacional</span>
+    <h1>¿Cómo se Resuelve Matemáticamente? Álgebra Matricial vs. Evolución Diferencial</h1>
+    <p style="font-size: 16px;">
+      El algoritmo opera mediante una <strong>arquitectura híbrida anidada de dos niveles</strong>: el problema físico directo y el problema inverso de optimización:
+    </p>
+
+    <div class="grid-2" style="margin-top: 20px;">
+      <div class="card-box" style="border-top: 4px solid var(--primary-blue);">
+        <h3 style="color: var(--primary-blue); font-size: 18px;">1. Problema Directo: Álgebra Matricial Cuántica</h3>
+        <p style="font-size: 14.5px;">Calcula el espectro a partir de constantes cuánticas dadas:</p>
+        <ul style="padding-left: 18px; font-size: 14px; color: #cbd5e1; line-height: 1.7;">
+          <li><strong>Base de rotor simétrico:</strong> Se proyecta el Hamiltoniano en |<i>J, K, M</i>⟩.</li>
+          <li><strong>Transformación de Wang:</strong> Factoriza la matriz completa (101&times;101) en <strong>4 sub-bloques tridiagonales</strong> (<i>E⁺, E⁻, O⁺, O⁻</i>), reduciendo el costo de <i>O(N³)</i> a <strong><i>O(N)</i></strong>.</li>
+          <li><strong>Reglas de selección:</strong> Elementos de matriz de cosenos directores para transiciones dipolares <i>a/b/c</i>.</li>
+          <li><strong>Convolución Voigt por FFT:</strong> Perfil Gauss (Doppler) &otimes; Lorentz (tiempo de vida).</li>
+        </ul>
+      </div>
+
+      <div class="card-box" style="border-top: 4px solid var(--accent-emerald);">
+        <h3 style="color: var(--accent-emerald); font-size: 18px;">2. Problema Inverso: Optimización Heurística Global</h3>
+        <p style="font-size: 14.5px;">Encuentra el conjunto óptimo de parámetros en ℝ⁸ ~ ℝ¹⁴:</p>
+        <ul style="padding-left: 18px; font-size: 14px; color: #cbd5e1; line-height: 1.7;">
+          <li><strong>¿Por qué no gradiente descendente?</strong> Porque en ℝ¹⁴ los mínimos locales engañosos atrapan a Levenberg-Marquardt de inmediato.</li>
+          <li><strong>Evolución Diferencial (DE):</strong> Algoritmo genético estocástico que recombina poblaciones de vectores explorando el hiperespacio sin derivadas.</li>
+          <li><strong>Rejilla Convergente + Caché LRU:</strong> Malla adaptativa con caché de eigenvalores. Reutiliza matrices ya diagonalizadas para saltos en frecuencia (aceleración 4.4&times;).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 9: EL DESAFÍO DE LA ASIMETRÍA: CUANDO SOLO AJUSTABA LA RAMA R -->
+<!-- ======================================================================= -->
+<section id="slide-9">
+  <div class="slide-container">
+    <span class="slide-tag">Evolución de Ajustes · Colaboración con Dr. Mario</span>
+    <h1>El Desafío de la Asimetría Espectral: Cuando Solo Ajustaba la Rama R</h1>
+
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 16px;">
+          En los primeros ensayos con rotor simétrico, nos topamos con un cuello de botella frustrante:
+        </p>
+        <div class="card-box" style="margin: 12px 0; border-left: 4px solid var(--accent-rose); padding: 14px;">
+          <p style="font-size: 14.5px; margin: 0;">
+            <strong>El dilema inicial:</strong> El optimizador lograba un ajuste aceptable en la <strong>Rama R</strong> (frecuencias altas, <i>r</i><sub>R</sub> &approx; 75.7%), pero la <strong>Rama P</strong> (frecuencias bajas) quedaba desfasada y colapsada (<strong><i>r</i><sub>P</sub> = 36.70%</strong>). Al intentar arreglar P, se destruía R.
+          </p>
+        </div>
+        <p style="font-size: 15px;">
+          <strong>El Rescate con Fermi-Dirac (Dr. Mario):</strong> Un switch suave en el origen (<i>a</i> = 910240053.92 MHz) permitió acoplar dos copias independientes. La Rama P saltó a <strong>54.38%</strong> y el ajuste global subió por primera vez a <strong>65.94%</strong> con residuales colapsando a <i>SSE</i> = 12.88.
+        </p>
+      </div>
+
+      <div>
+        <img src="images/figura_fermi_dirac_65pct.png" alt="Modelo 2 Copias Fermi-Dirac" class="slide-img">
+        <p style="font-size: 12px; text-align: center; margin-top: 6px; color: #94a3b8;">
+          Evidencia de progreso: Subplot central mostrando la mejora en Rama P (36.70% &rarr; 54.38%) manteniendo Rama R al 75.70%.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 10: EL CLÍMAX CUÁNTICO: WATSON & LAS 4 SUB-RAMAS -->
+<!-- ======================================================================= -->
+<section id="slide-10">
+  <div class="slide-container">
+    <span class="slide-tag">El Clímax de la Tesis · Ajuste Cuántico de Precisión</span>
+    <h1>Hamiltoniano de Watson y la Resolución de las 4 Sub-ramas</h1>
+
+    <div class="grid-2">
+      <div>
+        <div class="zoom-tab-bar">
+          <button class="zoom-tab-btn active" id="btn-watson-dash" onclick="setWatsonView('dashboard')">📊 Vista General (Dashboard)</button>
+          <button class="zoom-tab-btn" id="btn-watson-zoom" onclick="setWatsonView('zoom')">🔍 Zoom Grande: 4 Sub-ramas (pP, rP, Q, rR)</button>
+        </div>
+        <img id="watson-main-img" src="images/Slide_09_Hito_Watson_4Subramas_Dashboard.png" alt="Dashboard Watson" class="slide-img">
+        <button class="super-zoom-trigger" onclick="openLightbox(document.getElementById('watson-main-img').src, 2.4)">
+          🔎 Abrir Super-Zoom Interactivo en Sub-ramas (Lupa 2.4x – 5x)
+        </button>
+        <p id="watson-img-caption" style="font-size: 12px; text-align: center; margin-top: 6px; color: #10b981;">
+          Dashboard espectral: Ajuste global histórico al 70.81% (Cos = 85.8%). Haz clic en la imagen o usa los botones para acercar las sub-ramas.
+        </p>
+      </div>
+
+      <div>
+        <p style="font-size: 15.5px;">
+          Incorporando la distorsión centrífuga cuártica de Watson (<i>D</i><sub>J</sub>, <i>D</i><sub>JK</sub>, <i>D</i><sub>K</sub>) y la corrección analítica del <strong>salto de modo del láser</strong> detectado en la región central:
+        </p>
+
+        <div class="card-box" style="border-left: 4px solid var(--accent-emerald); margin-bottom: 12px; padding: 14px 16px;">
+          <span class="badge-tag badge-green" style="margin-bottom: 6px;">Aporte Inédito a la Literatura Científica</span>
+          <h3 style="margin-bottom: 4px; color: #10b981;">Ajuste Global Histórico: 70.81% (Cos = 85.82%)</h3>
+          <p style="font-size: 13.5px; margin: 0; color: #cbd5e1;">
+            <strong>Primera determinación experimental en fase gas</strong> de las constantes rotacionales efectivas (<i>A, B, C</i><sub>eff</sub>) y parámetros de Watson del Trifenileno, superando el límite vibrónico previo (Kokkin et al., <i>JCP</i> 2007).
+          </p>
+        </div>
+
+        <div class="grid-2" style="gap: 12px;">
+          <div class="card-box" style="padding: 12px;">
+            <p style="font-size: 12px; margin: 0;">1) Sub-rama <sup>p</sup>P Externa</p>
+            <p class="highlight-val">r = 78.00%</p>
+            <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Cos = 88.1% (antes 41.4%)</p>
+          </div>
+          <div class="card-box" style="padding: 12px;">
+            <p style="font-size: 12px; margin: 0;">2) Sub-rama <sup>r</sup>P Interna</p>
+            <p class="highlight-val">r = 83.98%</p>
+            <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Cos = 92.4% (antes 37.9%)</p>
+          </div>
+          <div class="card-box" style="padding: 12px;">
+            <p style="font-size: 12px; margin: 0;">3) Rama Q Central</p>
+            <p class="highlight-green">r = 59.63%</p>
+            <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Cos = 92.3% (¡antes 5.18%!)</p>
+          </div>
+          <div class="card-box" style="padding: 12px;">
+            <p style="font-size: 12px; margin: 0;">4) Sub-rama <sup>r</sup>R Alta Res</p>
+            <p class="highlight-green">r = 93.11%</p>
+            <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Cos = 96.1% (Puntos exactos)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 11: CRONOLOGÍA COMPLETA DE CONQUISTA ESPECTROSCÓPICA -->
+<!-- ======================================================================= -->
+<section id="slide-11">
+  <div class="slide-container">
+    <span class="slide-tag">Evolución de Récords · 2026</span>
+    <h1>Cronología de Conquista Científica: De la Paradoja al Récord Cuántico</h1>
+
+    <div class="timeline-container" style="margin-top: 15px;">
+      <div class="timeline-card">
+        <div class="timeline-badge">1</div>
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 2px; color: #38bdf8;">Hito 1: Validación en Carbazol</h3>
+          <p style="font-size: 14px; margin: 0;">Molécula rígida <i>C</i>₂ᵥ (3 constantes rotacionales <i>A, B, C</i>). Validación del pipeline Wang <i>O(N)</i> y convolución Voigt.</p>
+        </div>
+        <div><span class="badge-tag badge-green" style="font-size: 14px;">r = 98.8%</span></div>
+      </div>
+
+      <div class="timeline-card">
+        <div class="timeline-badge" style="border-color: #f43f5e; color: #f43f5e;">2</div>
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 2px; color: #f43f5e;">Hito 2: Muro Teórico del Rotor Plano Rígido</h3>
+          <p style="font-size: 14px; margin: 0;">2(<i>B - 2C</i>) = 0 colapsa los desdoblamientos de Wang. El ajuste tradicional de mínimos cuadrados se estrella.</p>
+        </div>
+        <div><span class="badge-tag badge-rose" style="font-size: 14px;">r = 16.77%</span></div>
+      </div>
+
+      <div class="timeline-card">
+        <div class="timeline-badge">3</div>
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 2px; color: #38bdf8;">Hito 3: Rescate Físico con Coriolis & ScoreSolver</h3>
+          <p style="font-size: 14px; margin: 0;">Liberación de la constante axial efectiva <i>C</i><sub>eff</sub> por acoplamiento con modo <i>e'</i> y ponderación ScoreSolver.</p>
+        </div>
+        <div><span class="badge-tag badge-blue" style="font-size: 14px;">r = 56.33%</span></div>
+      </div>
+
+      <div class="timeline-card">
+        <div class="timeline-badge">4</div>
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 2px; color: #38bdf8;">Hito 4: Modelo 2 Copias Fermi-Dirac (Dr. Mario)</h3>
+          <p style="font-size: 14px; margin: 0;">Conexión continua en el origen corrigiendo la asimetría de Rama P y Rama R. Récord global a 65.94%.</p>
+        </div>
+        <div><span class="badge-tag badge-blue" style="font-size: 14px;">r = 65.94%</span></div>
+      </div>
+
+      <div class="timeline-card" style="border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.1);">
+        <div class="timeline-badge" style="border-color: #10b981; color: #10b981;">5</div>
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 2px; color: #10b981;">Hito 5: Watson Cuártico + Salto de Modo Láser (Ajuste Global)</h3>
+          <p style="font-size: 14px; margin: 0;">Alineación sub-megahertz de las 4 sub-ramas con cosenos &gt;92% y récord histórico en Rama R (93.11%).</p>
+        </div>
+        <div><span class="badge-tag badge-green" style="font-size: 14px;">r = 70.81%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 12: DEFENSA CRUCIAL: CIENCIAS APLICADAS VS CIENCIAS BÁSICAS -->
+<!-- ======================================================================= -->
+<section id="slide-12">
+  <div class="slide-container">
+    <span class="slide-tag">Defensa Epistemológica del Posgrado</span>
+    <h1>¿Por qué este proyecto es de CIENCIAS APLICADAS y no de Ciencias Básicas?</h1>
+    <p style="font-size: 16.5px;">
+      La frontera entre la física fundamental y la ingeniería aplicada radica en la creación de herramientas tecnológicas, la resolución de fallas instrumentales reales y la transferencia metodológica:
+    </p>
+
+    <div class="grid-2" style="margin-top: 20px;">
+      <div class="card-box" style="border-top: 4px solid var(--primary-blue);">
+        <h3 style="color: var(--primary-blue);">1. Ingeniería de Software Científico Especializado</h3>
+        <p style="font-size: 14.5px;">No resolvimos un problema en papel: construimos una <strong>suite computacional de alto rendimiento</strong> en Python y MATLAB, implementando diagonalización tridiagonal de Wang <i>O(N)</i>, paralelismo y cachés LRU para acelerar el cálculo espectral 4.4&times;.</p>
+      </div>
+
+      <div class="card-box" style="border-top: 4px solid var(--accent-emerald);">
+        <h3 style="color: var(--accent-emerald);">2. Calibración & Procesamiento de Señales (DSP)</h3>
+        <p style="font-size: 14.5px;">Resolvimos un <strong>artefacto físico del hardware instrumental</strong>: los saltos de modo del láser (-1.19 GHz y -1.59 GHz). Esto es instrumentación aplicada directa y deconvolución de funciones de aparato reales (Voigt por FFT).</p>
+      </div>
+
+      <div class="card-box" style="border-top: 4px solid var(--accent-purple);">
+        <h3 style="color: var(--accent-purple);">3. Automatización del Problema Inverso</h3>
+        <p style="font-size: 14.5px;">Sustituimos el método artesanal de los años 90 (asignar manualmente miles de picos a ojo durante meses) por <strong>algoritmos heurísticos de optimización global</strong> (Rejilla Convergente y Evolución Diferencial) transferibles a cualquier laboratorio.</p>
+      </div>
+
+      <div class="card-box" style="border-top: 4px solid var(--accent-amber);">
+        <h3 style="color: var(--accent-amber);">4. Aplicación a Nuevos Materiales Funcionales</h3>
+        <p style="font-size: 14.5px;">La elucidación de constantes rotacionales de precisión en PAHs discóticos impacta el diseño y control de empaquetamiento supramolecular en <strong>semiconductores orgánicos y electrónica flexible</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 13: CONCLUSIONES Y TRABAJO FUTURO DE TESIS -->
+<!-- ======================================================================= -->
+<section id="slide-13">
+  <div class="slide-container">
+    <span class="slide-tag">Cierre Científico</span>
+    <h1>Conclusiones & Perspectivas de la Investigación</h1>
+
+    <div class="grid-2">
+      <div>
+        <div class="card-box" style="margin-bottom: 16px;">
+          <h3 style="color: #38bdf8;">Conclusiones Principales & Aporte Inédito</h3>
+          <ul style="padding-left: 20px; font-size: 14.5px; color: #cbd5e1; line-height: 1.72;">
+            <li><strong>Hito frente a la literatura previa:</strong> Mientras que estudios anteriores en chorro supersónico (Kokkin et al., 2007) solo resolvieron bandas vibrónicas (~cm⁻¹), este trabajo reporta <strong>por primera vez la resolución rotacional sub-Doppler y las constantes inerciales (<i>A, B, C</i><sub>eff</sub>) del Trifenileno en fase gas</strong>.</li>
+            <li>Se identificó y resolvió el colapso teórico del modelo rígido mediante acoplamiento de Coriolis de primer orden (<i>C</i><sub>eff</sub> &approx; 279.84 MHz).</li>
+            <li>El modelo de Watson cuártico con corrección de saltos de modo alcanzó un récord de <strong>70.81% global</strong> y <strong>93.11% en la Sub-rama <sup>r</sup>R</strong>.</li>
+            <li>Se validó una plataforma computacional especializada compatible con <strong>BlueprintXAS v5.23</strong> y aceleración por caché LRU (4.4&times;).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="card-box" style="border-left: 4px solid var(--accent-emerald); margin-bottom: 16px;">
+          <h3 style="color: #10b981;">Próximos Pasos en el Posgrado</h3>
+          <ul style="padding-left: 20px; font-size: 14.5px; color: #cbd5e1; line-height: 1.72;">
+            <li>Consolidación del manuscrito de tesis de Maestría y artículo científico bajo la dirección del Dr. Leonardo Álvarez-Valtierra y el Dr. Mario Ulises Delgado-Jaime.</li>
+            <li>Cálculo <i>ab-initio</i> de momentos dipolares vibrónicos y tensores inerciales acoplados usando PySCF y potenciales neuronales TorchANI.</li>
+            <li>Extensión de la metodología hacia hidrocarburos poliaromáticos discóticos mayores de interés astrofísico (Coroneno y Ovaleno).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERENCIAS BIBLIOGRÁFICAS FUNDAMENTALES -->
+    <div class="card-box" style="border-top: 3px solid var(--primary-blue); padding: 18px 20px; margin-top: 4px;">
+      <h3 style="color: var(--primary-blue); font-size: 16.5px; margin-bottom: 12px;">📚 Referencias Bibliográficas Fundamentales</h3>
+      <div class="grid-3" style="gap: 14px; align-items: start;">
+        <div style="font-size: 12.5px; line-height: 1.55;">
+          <p style="font-size: 12px; font-weight: 800; color: var(--primary-blue); text-transform: uppercase; margin-bottom: 6px;">1. Espectroscopía LIF de Alta Resolución (Dr. L. Álvarez-Valtierra)</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Álvarez-Valtierra, L. & Pratt, D. W.</strong> (2006). <i>Rotationally resolved S₁ &larr; S₀ electronic spectra of fluorene, carbazole, and dibenzofuran: Evidence for Herzberg–Teller coupling</i>. <strong>J. Chem. Phys.</strong>, 125(24), 244309.</p>
+          <p style="font-size: 12.5px; margin: 0;">• <strong>Álvarez-Valtierra, L., Yi, J. T. & Pratt, D. W.</strong> (2010). <i>High resolution electronic spectroscopy of 4-methylanisole in the gas phase</i>. <strong>Phys. Chem. Chem. Phys.</strong>, 12(35), 10430–10439.</p>
+        </div>
+
+        <div style="font-size: 12.5px; line-height: 1.55;">
+          <p style="font-size: 12px; font-weight: 800; color: var(--accent-emerald); text-transform: uppercase; margin-bottom: 6px;">2. Optimización Global & BlueprintXAS (Dr. M. U. Delgado-Jaime)</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Delgado-Jaime, M. U., Mewis, C. P. & Kennepohl, P.</strong> (2010). <i>Blueprint XAS: a Matlab-based toolbox for the fitting and analysis of XAS spectra</i>. <strong>J. Synchrotron Rad.</strong>, 17(1), 132–137.</p>
+          <p style="font-size: 12.5px; margin: 0;">• <strong>Delgado-Jaime, M. U. & Kennepohl, P.</strong> (2010). <i>Development and exploration of a new methodology for the fitting and analysis of XAS data</i>. <strong>J. Synchrotron Rad.</strong>, 17(1), 119–128.</p>
+        </div>
+
+        <div style="font-size: 12.5px; line-height: 1.55;">
+          <p style="font-size: 12px; font-weight: 800; color: var(--accent-amber); text-transform: uppercase; margin-bottom: 6px;">3. Antecedentes en Trifenileno & Teoría Cuántica</p>
+          <p style="font-size: 12.5px; margin-bottom: 6px;">• <strong>Kokkin, D. L., Reilly, N. J., Troy, T. P., Nauta, K. & Schmidt, T. W.</strong> (2007). <i>Gas phase spectra of all-benzenoid PAHs: Triphenylene</i>. <strong>J. Chem. Phys.</strong>, 126(8), 084304. <i>(Resolución vibrónica sin estructura rotacional)</i>.</p>
+          <p style="font-size: 12.5px; margin: 0;">• <strong>Wang, S. C.</strong> (1929). <strong>Phys. Rev.</strong>, 34, 243 | <strong>Watson, J. K. G.</strong> (1977). <strong>Vib. Spectra Struct.</strong>, 6, 1–89 | <strong>Storn, R. & Price, K.</strong> (1997). <strong>J. Glob. Optim.</strong>, 11, 341.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 14: AGRADECIMIENTOS FORMALES & PREGUNTAS ABIERTAS -->
+<!-- ======================================================================= -->
+<section id="slide-14">
+  <div class="slide-container">
+    <span class="slide-tag">Agradecimientos & Diálogo</span>
+    <h1>Agradecimientos Institucionales & Apertura a Preguntas</h1>
+
+    <div class="card-box" style="border-left: 4px solid var(--primary-blue); margin-bottom: 25px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 12px;">
+        <h3 style="color: var(--primary-blue); margin: 0;">Agradecimientos Especiales</h3>
+        <div class="ug-shield-badge" style="padding: 4px 10px; border-radius: 10px;">
+          <img src="images/ug_escudo.png" alt="Universidad de Guanajuato" style="height: 38px; width: auto; object-fit: contain; display: block;">
+        </div>
+      </div>
+      <p style="font-size: 15px; margin-bottom: 6px;">
+        A mis Directores de Tesis, <strong>Dr. Leonardo Álvarez-Valtierra</strong> (DCI-UG) y <strong>Dr. Mario Ulises Delgado-Jaime</strong> (UdeG, estancia sabática en Londres), por su acompañamiento y generosidad científica; a mi Co-asesor <strong>Dr. Jaime Valdez-Ruvalcaba</strong>; al <strong>Dr. Alejandro Gil-Villegas Montiel</strong> (SNII Nivel III) por su valioso apoyo con la ayudantía de investigación; y al <strong>Dr. José Marco Balleza Ordaz</strong> como Tutor Académico Oficial.
+      </p>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin: 0;">
+        A la División de Ciencias e Ingenierías (DCI-UG) y al Posgrado en Maestría en Ciencias Aplicadas (MCA).
+      </p>
+    </div>
+
+    <div style="text-align: center; padding: 25px 0;">
+      <h2 style="color: #ffffff; font-size: 28px; margin-bottom: 6px;">¿Alguna Pregunta o Comentario del Jurado y Audiencia?</h2>
+      <p style="font-size: 15px; color: var(--text-muted);">
+        Espacio abierto para retroalimentación científica, técnica y metodológica.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 15: PLAN B ROMPEHIELOS: PREGUNTAS MODELO PARA ESTUDIANTES -->
+<!-- ======================================================================= -->
+<section id="slide-15">
+  <div class="slide-container">
+    <span class="slide-tag">Dinámica de Mentoría Estudiantil</span>
+    <h1>Preguntas Modelo & Orientación para Estudiantes de Licenciatura</h1>
+
+    <div class="qa-accordion">
+      <div class="qa-item">
+        <div class="qa-header" onclick="toggleQA(this)">
+          <span>1. ¿Qué me inspiró a estudiar Ingeniería Química y luego dar el salto a la Maestría en Ciencias Aplicadas?</span>
+          <span class="qa-arrow">&#9660;</span>
+        </div>
+        <div class="qa-content">
+          Mi pasión siempre ha sido entender la materia a nivel molecular y usar herramientas computacionales avanzadas. En la ingeniería aprendes a resolver problemas a macroescala, pero en las Ciencias Aplicadas descubrí que los grandes retos de la física y la química de frontera se modelan primero en la computadora antes de sintetizarse en el laboratorio.
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-header" onclick="toggleQA(this)">
+          <span>2. ¿Cómo programé esta presentación interactiva en 3D con HTML5, Three.js y CSS?</span>
+          <span class="qa-arrow">&#9660;</span>
+        </div>
+        <div class="qa-content">
+          Utilicé JavaScript moderno y WebGL puro mediante Three.js para renderizar la molécula real en tiempo real con datos geométricos de RDKit, con shaders de luz, gradientes cinéticos y diseño completamente responsivo. Considero que la ciencia de vanguardia merece herramientas de comunicación interactivas que enganchen a la audiencia, lejos de las diapositivas estáticas convencionales.
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-header" onclick="toggleQA(this)">
+          <span>3. ¿Algún consejo para un estudiante de 1er a 3er semestre de licenciatura?</span>
+          <span class="qa-arrow">&#9660;</span>
+        </div>
+        <div class="qa-content">
+          No le teman a las matemáticas ni a la programación. Dominen Python, álgebra lineal y cálculo. Esas tres herramientas serán su verdadero superpoder, sin importar si deciden dedicarse a la física teórica, a la química experimental o a la ciencia de datos en la industria.
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-header" onclick="toggleQA(this)">
+          <span>4. ¿Para alguien de 4to a 7mo semestre que ya siente la pesadez de las materias filtro?</span>
+          <span class="qa-arrow">&#9660;</span>
+        </div>
+        <div class="qa-content">
+          Acérquense a los profesores investigadores, participen en veranos de investigación y no se queden solo con las clases teóricas. Ver cómo las ecuaciones cobran vida en el laboratorio o en simulaciones computacionales le devuelve todo el sentido y la motivación a la carrera.
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-header" onclick="toggleQA(this)">
+          <span>5. ¿Y para los de 8vo en adelante (o 13vo semestre xd) que ya ven cerca la titulación?</span>
+          <span class="qa-arrow">&#9660;</span>
+        </div>
+        <div class="qa-content">
+          Cuiden su salud mental y física por encima de todo. Organicen su tiempo, avancen un día a la vez y no posterguen la tesis. Rodéense de mentores que los respalden de verdad y no teman pedir ayuda. Todos hemos pasado por momentos de incertidumbre y sí se puede salir adelante con disciplina.
+        </div>
+      </div>
+
+      <div class="qa-item">
+        <div class="qa-header" onclick="toggleQA(this)">
+          <span>6. ¿Por qué física molecular computacional y ciencia de datos en lugar de irse directo a una planta?</span>
+          <span class="qa-arrow">&#9660;</span>
+        </div>
+        <div class="qa-content">
+          Porque la computación científica te da una versatilidad ilimitada. Los algoritmos de optimización global, el procesamiento de señales (DSP) y el modelado cuántico que desarrollamos aquí son exactamente las mismas habilidades que hoy demandan la inteligencia artificial, el diseño de fármacos y las empresas tecnológicas globales.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================= -->
+<!-- SLIDE 16: ESPACIO ESTUDIANTIL: VOTACIÓN CONSEJO DIVISIONAL DCI-UG -->
+<!-- ======================================================================= -->
+<section id="slide-16">
+  <div class="slide-container">
+    <span class="slide-tag">Comunidad Estudiantil DCI</span>
+    <h1>Participación & Representación Estudiantil ante el Consejo Divisional</h1>
+
+    <div class="spam-box">
+      <div style="flex: 1; min-width: 290px;">
+        <span class="spam-tag">🗳️ Candidatura Estudiantil · DCI-UG</span>
+        <h3 style="font-size: 22px; color: #ffffff; margin-bottom: 6px;">Representación ante el Consejo Divisional</h3>
+        <p style="font-size: 16px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">
+          Alex Díaz Gaytán & Paulina Velázquez
+        </p>
+        <p style="font-size: 14.5px; color: #cbd5e1; margin-bottom: 10px;">
+          Compromiso genuino con los alumnos de licenciatura y posgrado: transparencia activa en asignación de becas y apoyos, mejores condiciones de laboratorios y espacios académicos, defensa ética de los derechos estudiantiles y una voz firme e independiente en las sesiones del Consejo.
+        </p>
+        <p style="font-size: 13.5px; color: #38bdf8; font-weight: 600; margin: 0;">
+          ¡Tu participación transforma nuestra división! Contamos con tu confianza y tu voto.
+        </p>
+      </div>
+
+      <div style="text-align: right;">
+        <div class="contact-pill-box" style="background: rgba(2, 6, 23, 0.65); padding: 16px 22px; border-radius: 14px; border: 1px solid rgba(56, 189, 248, 0.35);">
+          <p class="contact-label" style="font-size: 12px; text-transform: uppercase; color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">Contacto Directo</p>
+          <p style="font-size: 15px; font-family: monospace; color: #ffffff; font-weight: 700; margin: 0;">ma.diazgaytan@ugto.mx</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX CON SUPER-ZOOM INTERACTIVO (1X A 5X) Y PANEO PARA SUB-RAMAS -->
+<div id="img-lightbox">
+  <div id="lb-toolbar" onclick="event.stopPropagation()">
+    <button class="lb-btn" onclick="changeLbZoom(-0.5)" title="Alejar">➖</button>
+    <span id="lb-zoom-indicator" style="font-size: 13px; font-weight: 800; color: #38bdf8; min-width: 52px; text-align: center; font-family: monospace;">100%</span>
+    <button class="lb-btn" onclick="changeLbZoom(0.6)" title="Acercar">➕</button>
+    <button class="lb-btn lb-btn-accent" onclick="setLbZoom(2.2)" title="Zoom ideal para inspeccionar las 4 sub-ramas">🔍 2.2x Sub-ramas</button>
+    <button class="lb-btn lb-btn-accent" onclick="setLbZoom(3.5)" title="Zoom profundo punto a punto">🔍 3.5x Detalle</button>
+    <button class="lb-btn" onclick="resetLbZoom()" title="Restablecer vista 100%">🔄 100%</button>
+    <button class="lb-btn lb-btn-close" onclick="closeLightbox()" title="Cerrar (Esc)">✕ Cerrar</button>
+  </div>
+  <div id="lb-viewport" onclick="if(lbScale <= 1.05) closeLightbox()">
+    <img id="img-lightbox-target" src="" alt="Vista ampliada con Super-Zoom">
+  </div>
+  <div id="lb-hint">💡 Rueda del ratón o pellizco a 2 dedos para Zoom (hasta 500%) · Arrastra para moverte por las sub-ramas · Doble clic para Zoom rápido 2.5x</div>
+</div>
+
+<!-- CONTROLES FLOTANTES -->
+<div id="footer-controls">
+  <button class="ctrl-btn" onclick="prevSlide()" title="Anterior (Flecha Arriba / Flecha Izq / RePág)">&#9664; <span>Ant<span class="hide-mobile">erior</span></span></button>
+  <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
+  <span id="slide-counter" style="color: var(--primary-blue); font-weight: 700; font-size: 14px;">1 / 17</span>
+  <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
+  <button class="ctrl-btn" onclick="nextSlide()" title="Siguiente (Espacio / Flecha Abajo / Flecha Der / AvPág)"><span>Sig<span class="hide-mobile">uiente</span></span> &#9654;</button>
+  <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
+  <button class="ctrl-btn" id="fs-btn" onclick="toggleFullScreen()" title="Pantalla Completa (Tecla 'F')">⛶<span class="hide-mobile"> Pantalla Completa</span></button>
+  <span class="ctrl-sep" style="color: #64748b; font-size: 14px;">|</span>
+  <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Modo Claro / Oscuro (Tecla 'T')">☀️<span class="hide-mobile"> Modo Claro</span></button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const totalSlides = 17;
+
+  function updateProgress() {
+    const scrollY = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollY / docHeight) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+
+    // Determinar slide activo
+    const sections = document.querySelectorAll('section');
+    sections.forEach((sec, idx) => {
+      const top = sec.offsetTop - 200;
+      const height = sec.offsetHeight;
+      if (scrollY >= top && scrollY < top + height) {
+        currentSlide = idx;
+      }
+    });
+
+    document.querySelectorAll('.dot').forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === currentSlide);
+    });
+
+    document.getElementById('slide-counter').innerText = (currentSlide + 1) + ' / ' + totalSlides;
+  }
+
+  function scrollToSlide(idx) {
+    const sec = document.getElementById('slide-' + idx);
+    if (sec) {
+      sec.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      scrollToSlide(currentSlide + 1);
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      scrollToSlide(currentSlide - 1);
+    }
+  }
+
+  window.addEventListener('scroll', updateProgress);
+
+  // Atajos de teclado para la presentacion
+  window.addEventListener('keydown', (e) => {
+    // Si el usuario esta escribiendo en algun input, no interceptar
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      nextSlide();
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      prevSlide();
+    } else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      toggleFullScreen();
+    } else if (e.key === 't' || e.key === 'T') {
+      e.preventDefault();
+      toggleTheme();
+    }
+  });
+
+  // Control de Pantalla Completa
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.log(`Error al activar pantalla completa: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    const fsBtn = document.getElementById('fs-btn');
+    if (fsBtn) {
+      fsBtn.innerHTML = document.fullscreenElement ? '⛶<span class="hide-mobile"> Salir</span>' : '⛶<span class="hide-mobile"> Pantalla Completa</span>';
+    }
+  });
+
+  // Control de Tema Claro / Oscuro
+  function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    localStorage.setItem('presentation-theme', isLight ? 'light' : 'dark');
+    const btn = document.getElementById('theme-btn');
+    if (btn) {
+      btn.innerHTML = isLight ? '🌙<span class="hide-mobile"> Modo Oscuro</span>' : '☀️<span class="hide-mobile"> Modo Claro</span>';
+    }
+    // Ajustar iluminación Three.js si está cargada
+    if (window.ambientLight3D && window.dirLight1_3D) {
+      if (isLight) {
+        window.ambientLight3D.intensity = 1.35;
+        window.dirLight1_3D.color.setHex(0x0284c7);
+      } else {
+        window.ambientLight3D.intensity = 0.9;
+        window.dirLight1_3D.color.setHex(0x38bdf8);
+      }
+    }
+  }
+
+  // Restaurar preferencia previa de tema
+  if (localStorage.getItem('presentation-theme') === 'light') {
+    document.body.classList.add('light-theme');
+    window.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '🌙<span class="hide-mobile"> Modo Oscuro</span>';
+    });
+  }
+
+  // Selector en Slide 10 entre Dashboard General y Zoom Grande de las 4 Sub-ramas
+  function setWatsonView(mode) {
+    const img = document.getElementById('watson-main-img');
+    const cap = document.getElementById('watson-img-caption');
+    const btnDash = document.getElementById('btn-watson-dash');
+    const btnZoom = document.getElementById('btn-watson-zoom');
+    if (!img) return;
+    if (mode === 'zoom') {
+      img.src = 'images/Slide_10_Zoom_Punto_a_Punto_RamaQ_y_Subramas.png';
+      if (cap) cap.innerText = 'Acercamiento punto a punto en las 4 Sub-ramas (pP, rP, Q y rR): alineación sub-MHz tras corrección de salto de modo + Watson.';
+      if (btnDash) btnDash.classList.remove('active');
+      if (btnZoom) btnZoom.classList.add('active');
+    } else {
+      img.src = 'images/Slide_09_Hito_Watson_4Subramas_Dashboard.png';
+      if (cap) cap.innerText = 'Dashboard espectral: Ajuste global histórico al 70.81% (Cos = 85.8%). Haz clic en la imagen o usa los botones para acercar las sub-ramas.';
+      if (btnDash) btnDash.classList.add('active');
+      if (btnZoom) btnZoom.classList.remove('active');
+    }
+  }
+
+  // Lightbox con Super-Zoom Interactivo (1x a 5x) y Paneo para inspeccionar sub-ramas
+  let lbScale = 1;
+  let lbX = 0;
+  let lbY = 0;
+  let lbDragging = false;
+  let lbStartX = 0;
+  let lbStartY = 0;
+  let lbPinchDist = null;
+
+  function applyLbTransform() {
+    const target = document.getElementById('img-lightbox-target');
+    const ind = document.getElementById('lb-zoom-indicator');
+    if (target) {
+      target.style.transform = `translate(${lbX}px, ${lbY}px) scale(${lbScale})`;
+    }
+    if (ind) {
+      ind.innerText = Math.round(lbScale * 100) + '%';
+    }
+  }
+
+  function setLbZoom(newScale) {
+    lbScale = Math.max(1, Math.min(5, newScale));
+    if (lbScale <= 1.02) {
+      lbX = 0;
+      lbY = 0;
+    }
+    applyLbTransform();
+  }
+
+  function changeLbZoom(delta) {
+    setLbZoom(lbScale + delta);
+  }
+
+  function resetLbZoom() {
+    lbScale = 1;
+    lbX = 0;
+    lbY = 0;
+    applyLbTransform();
+  }
+
+  function openLightbox(src, initialZoom = 1) {
+    const lb = document.getElementById('img-lightbox');
+    const target = document.getElementById('img-lightbox-target');
+    if (lb && target && src) {
+      target.src = src;
+      lbScale = initialZoom;
+      lbX = 0;
+      lbY = 0;
+      applyLbTransform();
+      lb.classList.add('active');
+    }
+  }
+
+  function closeLightbox() {
+    const lb = document.getElementById('img-lightbox');
+    if (lb) lb.classList.remove('active');
+    resetLbZoom();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.slide-img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.src, 1.0));
+    });
+
+    const vp = document.getElementById('lb-viewport');
+    if (!vp) return;
+
+    // Zoom con rueda del ratón
+    vp.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.35 : -0.35;
+      changeLbZoom(delta);
+    }, { passive: false });
+
+    // Doble clic para alternar zoom 2.5x en las sub-ramas
+    vp.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      if (lbScale > 1.2) {
+        resetLbZoom();
+      } else {
+        setLbZoom(2.5);
+      }
+    });
+
+    // Arrastre con ratón cuando hay zoom
+    vp.addEventListener('mousedown', (e) => {
+      if (lbScale <= 1.02) return;
+      lbDragging = true;
+      lbStartX = e.clientX - lbX;
+      lbStartY = e.clientY - lbY;
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!lbDragging) return;
+      lbX = e.clientX - lbStartX;
+      lbY = e.clientY - lbStartY;
+      applyLbTransform();
+    });
+    window.addEventListener('mouseup', () => {
+      lbDragging = false;
+    });
+
+    // Soporte táctil en el Lightbox (1 dedo panea, 2 dedos hacen pinch-zoom)
+    vp.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1 && lbScale > 1.02) {
+        lbDragging = true;
+        lbStartX = e.touches[0].clientX - lbX;
+        lbStartY = e.touches[0].clientY - lbY;
+      } else if (e.touches.length === 2) {
+        lbDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lbPinchDist = Math.hypot(dx, dy);
+      }
+    }, { passive: true });
+
+    vp.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && lbDragging) {
+        e.preventDefault();
+        lbX = e.touches[0].clientX - lbStartX;
+        lbY = e.touches[0].clientY - lbStartY;
+        applyLbTransform();
+      } else if (e.touches.length === 2 && lbPinchDist !== null) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const ratio = dist / lbPinchDist;
+        setLbZoom(lbScale * ratio);
+        lbPinchDist = dist;
+      }
+    }, { passive: false });
+
+    vp.addEventListener('touchend', () => {
+      lbDragging = false;
+      lbPinchDist = null;
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  });
+
+  // WIDGET INTERACTIVO DE MR INCREIBLE PERTURBADO + PAISAJES 3D
+  const memeData = {
+    1: {
+      img: 'images/mr_incredible_1.png',
+      landscape: 'images/landscape_stage_1_convex.png',
+      landscapeCaption: 'Paisaje cuadrático suave en ℝ³ (1 mínimo global único sin trampas)',
+      title: 'Fase 1: Molécula Sencilla (Carbazol)',
+      desc: '3 parámetros rotacionales libres (A, B, C). Espacio suave y convexo. Cualquier gradiente descendente converge en 0.2 segundos. La vida es bella y creemos que nos graduaremos en 6 meses.',
+      dim: 'Dimensión: ℝ³ (Espacio Convexo)',
+      corr: 'Correlación: 98.8%'
+    },
+    2: {
+      img: 'images/mr_incredible_2.png',
+      landscape: 'images/landscape_stage_2_degenerate.png',
+      landscapeCaption: 'Valle plano degenerado: 2(B-2C)=0 anula gradiente rotacional',
+      title: 'Fase 2: El Choque con el Rotor Plano Rígido',
+      desc: 'Intentamos simular con rotor plano estricto: B=A y C=B/2. Los desdoblamientos de Wang colapsan por simetría inercial. El ajuste se estanca en 16.77% y no se mueve ni a palos.',
+      dim: 'Dimensión: ℝ³ (Simetría Colapsada)',
+      corr: 'Correlación: 16.77%'
+    },
+    3: {
+      img: 'images/mr_incredible_3.png',
+      landscape: 'images/landscape_stage_3_local_minima.png',
+      landscapeCaption: 'Múltiples pozos locales: optimizadores locales caen en trampas',
+      title: 'Fase 3: Coriolis Rompe la Restricción (C_eff libre)',
+      desc: 'Liberamos la constante axial efectiva por acoplamiento de Coriolis. El espacio 2D (A vs dA) se llena de mínimos locales engañosos y mesetas de gradiente nulo. El optimizador de MATLAB se pierde en trampas locales.',
+      dim: 'Dimensión: ℝ⁷ (Mínimos Locales)',
+      corr: 'Correlación: 56.33%'
+    },
+    4: {
+      img: 'images/mr_incredible_4.png',
+      landscape: 'images/landscape_stage_4_rugged_high_dim.png',
+      landscapeCaption: 'El abismo no convexo en ℝ⁸ ~ ℝ¹⁴: decenas de oscilaciones y barreras',
+      title: 'Fase 4: El Abismo (Watson + Salto de Modo Láser)',
+      desc: 'Entre 8 y 14 parámetros cuánticos acoplados (DJ, DJK, DK, Coriolis, salto de modo). Si optimizamos con mínimos cuadrados tradicionales (ScoreSolver=false), la intensidad colapsa y el error estalla. Modo pesadilla activado.',
+      dim: 'Dimensión: ℝ⁸ ~ ℝ¹⁴ (Muy Mal Condicionado)',
+      corr: 'Score tradicional: 16.26%'
+    },
+    5: {
+      img: 'images/mr_incredible_giga.png',
+      landscape: 'images/landscape_stage_5_solved.png',
+      landscapeCaption: 'Conquista del mínimo global mediante Rejilla Convergente + DE',
+      title: 'Fase 5: Conquista Global (Rejilla Convergente + DE)',
+      desc: 'Implementamos la Rejilla Convergente Multinivel con Caché LRU de Eigenvalores + Ponderación de Forma (ScoreSolver=true). ¡BUM! Se eliminan los mínimos locales: r = 70.81% global, Rama R al 93.11% y proyecto de tesis / paper "horneándose".',
+      dim: 'Algoritmo: Rejilla Convergente + DE',
+      corr: 'Récord: 70.81% (Cos = 85.8%)'
+    }
+  };
+
+  function setMemeStage(stage) {
+    document.querySelectorAll('.stage-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', (idx + 1) === stage);
+    });
+    const data = memeData[stage];
+    if (!data) return;
+    const imgEl = document.getElementById('meme-img');
+    if (imgEl) {
+      imgEl.src = data.img;
+    }
+    const landEl = document.getElementById('meme-landscape');
+    if (landEl) {
+      landEl.src = data.landscape;
+    }
+    const landCap = document.getElementById('meme-landscape-caption');
+    if (landCap) {
+      landCap.innerText = data.landscapeCaption;
+    }
+    document.getElementById('meme-title').innerText = data.title;
+    document.getElementById('meme-desc').innerText = data.desc;
+    document.getElementById('meme-dim').innerText = data.dim;
+    document.getElementById('meme-corr').innerText = data.corr;
+  }
+
+  // Acordeón de preguntas frecuentes
+  function toggleQA(headerEl) {
+    const item = headerEl.parentElement;
+    item.classList.toggle('open');
+  }
+
+  // =========================================================================
+  // VISUALIZADOR MOLECULAR 3D CIENTÍFICO BASADO EN RDKIT (C18H12 PLANAR)
+  // Giro oblato axial lento alrededor del eje de simetría inercial
+  // =========================================================================
+  const rdkitTriphenylene = {
+    atoms: [
+      { element: 'C', x: -1.1359, y: 3.6248, z: 0.0 },
+      { element: 'C', x: -2.3564, y: 2.9794, z: 0.0 },
+      { element: 'C', x: -2.3961, y: 1.5854, z: 0.0 },
+      { element: 'C', x: -1.2224, y: 0.7925, z: 0.0 },
+      { element: 'C', x: 0.0332, y: 1.4563, z: 0.0 },
+      { element: 'C', x: 0.0387, y: 2.8728, z: 0.0 },
+      { element: 'C', x: 1.2975, y: 0.6623, z: 0.0 },
+      { element: 'C', x: 2.5710, y: 1.2824, z: 0.0 },
+      { element: 'C', x: 3.7584, y: 0.5510, z: 0.0 },
+      { element: 'C', x: 3.7071, y: -0.8287, z: 0.0 },
+      { element: 'C', x: 2.4686, y: -1.4698, z: 0.0 },
+      { element: 'C', x: 1.2447, y: -0.7569, z: 0.0 },
+      { element: 'C', x: -0.0751, y: -1.4548, z: 0.0 },
+      { element: 'C', x: -0.1749, y: -2.8678, z: 0.0 },
+      { element: 'C', x: -1.4021, y: -3.5303, z: 0.0 },
+      { element: 'C', x: -2.5713, y: -2.7961, z: 0.0 },
+      { element: 'C', x: -2.5073, y: -1.4030, z: 0.0 },
+      { element: 'C', x: -1.2778, y: -0.6994, z: 0.0 },
+      { element: 'H', x: -1.0888, y: 4.7104, z: 0.0 },
+      { element: 'H', x: -3.2801, y: 3.5516, z: 0.0 },
+      { element: 'H', x: -3.3842, y: 1.1375, z: 0.0 },
+      { element: 'H', x: 0.9650, y: 3.4374, z: 0.0 },
+      { element: 'H', x: 2.6773, y: 2.3620, z: 0.0 },
+      { element: 'H', x: 4.7158, y: 1.0648, z: 0.0 },
+      { element: 'H', x: 4.6237, y: -1.4123, z: 0.0 },
+      { element: 'H', x: 2.4944, y: -2.5544, z: 0.0 },
+      { element: 'H', x: 0.7069, y: -3.4996, z: 0.0 },
+      { element: 'H', x: -1.4357, y: -4.6164, z: 0.0 },
+      { element: 'H', x: -3.5348, y: -3.2981, z: 0.0 },
+      { element: 'H', x: -3.4594, y: -0.8830, z: 0.0 }
+    ],
+    bonds: [
+      { from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3 }, { from: 3, to: 4 },
+      { from: 4, to: 5 }, { from: 4, to: 6 }, { from: 6, to: 7 }, { from: 7, to: 8 },
+      { from: 8, to: 9 }, { from: 9, to: 10 }, { from: 10, to: 11 }, { from: 11, to: 12 },
+      { from: 12, to: 13 }, { from: 13, to: 14 }, { from: 14, to: 15 }, { from: 15, to: 16 },
+      { from: 16, to: 17 }, { from: 5, to: 0 }, { from: 17, to: 3 }, { from: 11, to: 6 },
+      { from: 17, to: 12 },
+      { from: 0, to: 18 }, { from: 1, to: 19 }, { from: 2, to: 20 }, { from: 5, to: 21 },
+      { from: 7, to: 22 }, { from: 8, to: 23 }, { from: 9, to: 24 }, { from: 10, to: 25 },
+      { from: 13, to: 26 }, { from: 14, to: 27 }, { from: 15, to: 28 }, { from: 16, to: 29 }
+    ]
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('molecule-canvas');
+    if (!container || typeof THREE === 'undefined') return;
+
+    // Escena, Camara y Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const initialCamZ = 16.5;
+    camera.position.set(0, 0, initialCamZ);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    container.appendChild(renderer.domElement);
+
+    // Iluminación
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    scene.add(ambientLight);
+    window.ambientLight3D = ambientLight;
+
+    const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 1.4);
+    dirLight1.position.set(12, 15, 20);
+    scene.add(dirLight1);
+    window.dirLight1_3D = dirLight1;
+
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.85);
+    dirLight2.position.set(-12, -10, 15);
+    scene.add(dirLight2);
+
+    // Grupo Maestro Molecular
+    const molMaster = new THREE.Group();
+    // Inclinación inicial de ~32 grados para apreciar el aspecto plano 3D
+    molMaster.rotation.x = 0.55;
+    scene.add(molMaster);
+
+    // Materiales
+    const carbonMat = new THREE.MeshStandardMaterial({
+      color: 0x0284c7,
+      roughness: 0.22,
+      metalness: 0.65
+    });
+    const hydrogenMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
+      roughness: 0.35,
+      metalness: 0.1
+    });
+    const bondMat = new THREE.MeshStandardMaterial({
+      color: 0x64748b,
+      roughness: 0.3,
+      metalness: 0.5
+    });
+
+    // Geometrías
+    const carbonGeo = new THREE.SphereGeometry(0.38, 22, 22);
+    const hydrogenGeo = new THREE.SphereGeometry(0.22, 18, 18);
+
+    // Instanciar Atomos con coordenadas RDKit
+    const atomMeshes = [];
+    rdkitTriphenylene.atoms.forEach(atom => {
+      const geo = atom.element === 'C' ? carbonGeo : hydrogenGeo;
+      const mat = atom.element === 'C' ? carbonMat : hydrogenMat;
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(atom.x, atom.y, atom.z);
+      molMaster.add(mesh);
+      atomMeshes.push(mesh.position);
+    });
+
+    // Instanciar Enlaces
+    rdkitTriphenylene.bonds.forEach(b => {
+      const p1 = atomMeshes[b.from];
+      const p2 = atomMeshes[b.to];
+      const isCC = rdkitTriphenylene.atoms[b.from].element === 'C' && rdkitTriphenylene.atoms[b.to].element === 'C';
+      const rad = isCC ? 0.08 : 0.045;
+      createBond(p1, p2, rad, bondMat);
+    });
+
+    function createBond(p1, p2, radius, mat) {
+      const dir = new THREE.Vector3().subVectors(p2, p1);
+      const len = dir.length();
+      const geom = new THREE.CylinderGeometry(radius, radius, len, 10);
+      geom.translate(0, len / 2, 0);
+      geom.rotateX(Math.PI / 2);
+      const bMesh = new THREE.Mesh(geom, mat);
+      bMesh.position.copy(p1);
+      bMesh.lookAt(p2);
+      molMaster.add(bMesh);
+    }
+
+    // Interacción Mouse y Touch (Móvil)
+    let isDragging = false;
+    let prevMouseX = 0, prevMouseY = 0;
+    let prevPinchDist = null;
+
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => isDragging = false);
+
+    container.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMouseX;
+      const deltaY = e.clientY - prevMouseY;
+      molMaster.rotation.z += deltaX * 0.008;
+      molMaster.rotation.x += deltaY * 0.008;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    // Soporte táctil completo para smartphones (1 dedo rota, 2 dedos hacen zoom)
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        prevMouseX = e.touches[0].clientX;
+        prevMouseY = e.touches[0].clientY;
+      } else if (e.touches.length === 2) {
+        isDragging = true;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        prevPinchDist = Math.hypot(dx, dy);
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      if (e.touches.length === 1) {
+        e.preventDefault();
+        const deltaX = e.touches[0].clientX - prevMouseX;
+        const deltaY = e.touches[0].clientY - prevMouseY;
+        molMaster.rotation.z += deltaX * 0.01;
+        molMaster.rotation.x += deltaY * 0.01;
+        prevMouseX = e.touches[0].clientX;
+        prevMouseY = e.touches[0].clientY;
+      } else if (e.touches.length === 2 && prevPinchDist !== null) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const deltaDist = prevPinchDist - dist;
+        camera.position.z += deltaDist * 0.04;
+        camera.position.z = Math.max(9, Math.min(28, camera.position.z));
+        prevPinchDist = dist;
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchend', () => {
+      isDragging = false;
+      prevPinchDist = null;
+    });
+
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      camera.position.z += e.deltaY * 0.012;
+      camera.position.z = Math.max(9, Math.min(28, camera.position.z));
+    }, { passive: false });
+
+    container.addEventListener('dblclick', () => {
+      camera.position.set(0, 0, initialCamZ);
+      molMaster.rotation.set(0.55, 0, 0);
+    });
+
+    // Animación: Giro oblato axial continuo y muy lento
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!isDragging) {
+        // Giro suave alrededor del eje axial de la molécula plana (eje de simetría)
+        molMaster.rotation.z += 0.0028;
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      if (container.clientWidth > 0 && container.clientHeight > 0) {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
